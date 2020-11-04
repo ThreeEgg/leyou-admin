@@ -26,6 +26,7 @@ export default [
           {
             path: '/welcome',
             name: 'welcome',
+            hideInMenu:true,
             icon: 'smile',
             component: './Welcome',
           },

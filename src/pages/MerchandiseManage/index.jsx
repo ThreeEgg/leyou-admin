@@ -77,7 +77,7 @@ class MerchandiseManage extends Component {
               <FormOutlined /> 分类管理
             </Button>,
             <Button type="primary" size="small" key={1}>
-              <PlusOutlined /> 新建
+              <PlusOutlined /> 新增
             </Button>,
           ]}
           request={(paramsData, sorter) => {

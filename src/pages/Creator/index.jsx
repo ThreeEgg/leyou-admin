@@ -20,15 +20,15 @@ class Creator extends Component {
       fixed: true
     },
     {
-      title: '描述',
+      title: '名称',
       dataIndex: '1',
     },
     {
-      title: '描述',
+      title: '地址',
       dataIndex: '2',
     },
     {
-      title: '描述',
+      title: '状态',
       dataIndex: '3',
     },
     {
@@ -62,7 +62,7 @@ class Creator extends Component {
           columns={columns}
           toolBarRender={() => [
             <Button type="primary" size="small" key={1}>
-              <PlusOutlined /> 新建
+              <PlusOutlined /> 新增
             </Button>,
           ]}
           request={(paramsData, sorter) => {
