@@ -56,7 +56,22 @@ export default [
             path: '/merchandiseManage',
             name: '商品管理',
             icon: 'table',
-            component: './MerchandiseManage',
+            // component: './MerchandiseManage',
+            routes:[
+              {
+                path: '/merchandiseManage',
+                name: '商品管理',
+                icon: 'table',
+                component: './MerchandiseManage',
+              },
+              {
+                path: '/merchandiseManage/classifyManage',
+                name: '分类管理',
+                hideInMenu:true,
+                icon: 'table',
+                component: './MerchandiseManage/components/ClassifyManage',
+              },
+            ]
           },
           {
             path: '/orderManage',
@@ -68,13 +83,44 @@ export default [
             path: '/enterpriseManage',
             name: '企业管理',
             icon: 'table',
-            component: './EnterpriseManage',
+            // component: './EnterpriseManage',
+            routes:[
+              {
+                path: '/enterpriseManage',
+                name: '企业管理',
+                icon: 'table',
+                component: './EnterpriseManage',
+              },
+              {
+                path: '/enterpriseManage/reportForm',
+                name: '全部报表',
+                hideInMenu:true,
+                icon: 'table',
+                component: './EnterpriseManage/components/ReportForm',
+              }
+              
+            ]
           },
           {
-            path: '/userManage',
-            name: '用户管理',
+            path: '/clientManage',
+            name: '客户管理',
             icon: 'table',
-            component: './UserManage',
+            // component: './ClientManage',
+            routes:[
+              {
+                path: '/clientManage',
+                name: '客户管理',
+                icon: 'table',
+                component: './ClientManage',
+              },
+              {
+                path: '/clientManage/contract',
+                name: '查看合同',
+                hideInMenu:true,
+                icon: 'table',
+                component: './ClientManage/components/Contract',
+              }
+            ]
           },
           {
             path: '/fundRecord',

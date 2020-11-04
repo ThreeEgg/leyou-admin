@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
 import { getList } from '@/services/common'
+import PageBack from "@/components/PageBack"
 
-class UserManage extends Component {
+class Contract extends Component {
 
   state = {
 
@@ -19,45 +19,15 @@ class UserManage extends Component {
       fixed: true
     },
     {
-      title: '手机号',
+      title: '订单编号',
       dataIndex: '1',
-      search:false,
     },
     {
-      title: '昵称',
+      title: '完成时间',
       dataIndex: '2',
-      search:false,
     },
     {
-      title: '可查看企业',
-      dataIndex: '3',
-      search:false,
-    },
-    {
-      title: '注册时间',
-      dataIndex: '3',
-    },
-    {
-      title: '当前有效合同数量',
-      dataIndex: '3',
-      search:false,
-    },
-    {
-      title: '历史合同数量',
-      dataIndex: '3',
-      search:false,
-    },
-    {
-      title: '账户积分',
-      dataIndex: '3',
-    },
-    {
-      title: '最后登录时间',
-      dataIndex: '3',
-      search:false,
-    },
-    {
-      title: '订单状态',
+      title: '商品名称',
       dataIndex: '3',
     },
     {
@@ -68,9 +38,7 @@ class UserManage extends Component {
       width: 80,
       render: () => (
         <Space>
-          <Button type="link" size="small" >积分变更</Button>
-          <Button type="link" size="small" >信息编辑</Button>
-          <Button type="link" size="small" >查看合同</Button>
+          <Button type="link" size="small" >查看合同</Button>、
         </Space>
       ),
     },
@@ -83,16 +51,13 @@ class UserManage extends Component {
   render() {
     const { columns } = this;
     return (
-      <PageContainer>
+      <PageContainer
+        title={<PageBack title="查看合同"></PageBack> }
+      >
         <ProTable
           // actionRef={this.actionRef}
-          // search={false}
+          search={false}
           columns={columns}
-          toolBarRender={() => [
-            <Button type="primary" size="small" key={1}>
-              <PlusOutlined /> 新增
-            </Button>,
-          ]}
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
 
@@ -118,4 +83,4 @@ class UserManage extends Component {
   }
 }
 
-export default UserManage
+export default Contract

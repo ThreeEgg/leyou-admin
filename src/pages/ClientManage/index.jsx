@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined, FormOutlined, } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
 import { getList } from '@/services/common'
-import {history} from "umi";
+import {history} from "umi"
 
-class MerchandiseManage extends Component {
+class ClientManage extends Component {
 
   state = {
 
@@ -20,28 +20,46 @@ class MerchandiseManage extends Component {
       fixed: true
     },
     {
-      title: '商品名称',
+      title: '手机号',
       dataIndex: '1',
+      search:false,
     },
     {
-      title: '所属分类',
+      title: '昵称',
       dataIndex: '2',
+      search:false,
     },
     {
-      title: '商品类型',
+      title: '可查看企业',
+      dataIndex: '3',
+      search:false,
+    },
+    {
+      title: '注册时间',
       dataIndex: '3',
     },
     {
-      title: '剩余库存(总)',
-      dataIndex: '4',
+      title: '当前有效合同数量',
+      dataIndex: '3',
+      search:false,
     },
     {
-      title: '单价',
-      dataIndex: '5',
+      title: '历史合同数量',
+      dataIndex: '3',
+      search:false,
     },
     {
-      title: '状态',
-      dataIndex: '6',
+      title: '账户积分',
+      dataIndex: '3',
+    },
+    {
+      title: '最后登录时间',
+      dataIndex: '3',
+      search:false,
+    },
+    {
+      title: '订单状态',
+      dataIndex: '3',
     },
     {
       title: '操作',
@@ -51,24 +69,22 @@ class MerchandiseManage extends Component {
       width: 80,
       render: () => (
         <Space>
-          <Button type="link" size="small" >上架</Button>
-          <Button type="link" size="small" >编辑</Button>
-          <Button type="link" size="small" >品类管理</Button>
-          <Button type="link" size="small" >合同管理</Button>
-          <Button type="link" size="small" danger>删除</Button>
+          <Button type="link" size="small" >积分变更</Button>
+          <Button type="link" size="small" >信息编辑</Button>
+          <Button type="link" size="small" onClick={this.gotoContract}>查看合同</Button>
         </Space>
       ),
     },
   ]
 
-  formatParams = (paramsData) => {
-    return paramsData
+  gotoContract = ()=>{
+    history.push({
+      pathname:`/clientManage/contract`
+    })
   }
 
-  gotoClassManage = ()=>{
-    history.push({
-      pathname:`/merchandiseManage/classifyManage`
-    })
+  formatParams = (paramsData) => {
+    return paramsData
   }
 
   render() {
@@ -77,12 +93,9 @@ class MerchandiseManage extends Component {
       <PageContainer>
         <ProTable
           // actionRef={this.actionRef}
-          search={false}
+          // search={false}
           columns={columns}
           toolBarRender={() => [
-            <Button type="primary" size="small" key={2} onClick={this.gotoClassManage}>
-              <FormOutlined /> 分类管理
-            </Button>,
             <Button type="primary" size="small" key={1}>
               <PlusOutlined /> 新增
             </Button>,
@@ -112,4 +125,4 @@ class MerchandiseManage extends Component {
   }
 }
 
-export default MerchandiseManage
+export default ClientManage

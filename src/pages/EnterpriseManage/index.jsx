@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
 import { getList } from '@/services/common'
+import {history} from 'umi'
 
 class EnterpriseManage extends Component {
 
@@ -59,11 +60,17 @@ class EnterpriseManage extends Component {
         <Space>
           <Button type="link" size="small" >停用</Button>
           <Button type="link" size="small" >编辑</Button>
-          <Button type="link" size="small" >全部报表</Button>
+          <Button type="link" size="small" onClick={this.gotoReport}>全部报表</Button>
         </Space>
       ),
     },
   ]
+
+  gotoReport = ()=>{
+    history.push({
+      pathname:`/enterpriseManage/reportForm`
+    })
+  }
 
   formatParams = (paramsData) => {
     return paramsData
