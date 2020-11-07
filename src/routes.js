@@ -21,15 +21,15 @@ export default [
         routes: [
           {
             path: '/',
-            redirect: '/welcome',
+            redirect: '/creator',
           },
-          {
+          /* {
             path: '/welcome',
             name: 'welcome',
             hideInMenu:true,
             icon: 'smile',
             component: './Welcome',
-          },
+          }, */
           /* {
             path: '/admin',
             name: 'admin',
@@ -60,16 +60,16 @@ export default [
             routes:[
               {
                 path: '/merchandiseManage',
-                name: '商品管理',
+                name: '分类管理',
                 icon: 'table',
                 component: './MerchandiseManage',
               },
               {
-                path: '/merchandiseManage/classifyManage',
-                name: '分类管理',
+                path: '/merchandiseManage/productManage',
+                name: '商品管理',
                 hideInMenu:true,
                 icon: 'table',
-                component: './MerchandiseManage/components/ClassifyManage',
+                component: './MerchandiseManage/components/ProductManage',
               },
             ]
           },
@@ -119,6 +119,12 @@ export default [
                 hideInMenu:true,
                 icon: 'table',
                 component: './ClientManage/components/Contract',
+              },
+              {
+                path:'/clientManage/FundChange',
+                name:'簿记豆变更',
+                hideInMenu:true,
+                component: './ClientManage/components/FundChange'
               }
             ]
           },

@@ -1,16 +1,19 @@
-import React, { Component } from 'react'
+import React, { Component,createRef } from 'react'
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined,ExclamationCircleOutlined, } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
-import { Button, Space, } from 'antd'
+import { Button, Space,message,Modal, } from 'antd'
 import { getList } from '@/services/common'
+import EditModal from './components/EditModal'
 
-
+const {confirm} = Modal
 class Creator extends Component {
 
   state = {
-
+    editData:{},
   }
+
+  EditModalRef = createRef()
 
   columns = [
     {
@@ -26,6 +29,9 @@ class Creator extends Component {
     {
       title: '地址',
       dataIndex: '2',
+      renderText:(value,item)=>{
+        return <span id={`address-${item.id}`} >{value}</span>
+      }
     },
     {
       title: '状态',
@@ -37,16 +43,58 @@ class Creator extends Component {
       search: false,
       fixed: 'right',
       width: 80,
-      render: () => (
+      render: (_,item) => (
         <Space>
-          <Button type="link" size="small" >失效</Button>
-          <Button type="link" size="small" >复制链接</Button>
-          <Button type="link" size="small" >编辑</Button>
-          <Button type="link" size="small" danger>删除</Button>
+          <Button type="link" size="small" onClick={()=>this.handleConfirm(3)}>失效</Button>
+          <Button type="link" size="small" onClick={()=>this.handleConfirm(2)}>生效</Button>
+          <Button type="link" size="small" onClick={()=>this.copyUrl(`address-${item.id}`)}>复制链接</Button>
+          <Button type="link" size="small" onClick={()=>this.handleEdit(2,item)}>编辑</Button>
+          <Button type="link" size="small" danger onClick={()=>this.handleConfirm(1)}>删除</Button>
         </Space>
       ),
     },
   ]
+
+  handleConfirm = (flag,id)=>{
+    let content = "";
+    if(flag === 1){
+      content = "确认删除该页面？"
+    }else if (flag === 2){
+      content = "确认该页面生效？"
+    }else if( flag === 3){
+      content = "确认该页面失效？"
+    }
+    confirm({
+      title: '确认操作',
+      icon: <ExclamationCircleOutlined />,
+      content,
+      onOk:()=>{
+
+      },
+      onCancel() {
+      },
+    });
+  }
+
+  handleEdit = (flag,editData)=>{
+    this.setState({
+      editData
+    },()=>{
+      this.EditModalRef.current.handleOk()
+    })
+  }
+
+  copyUrl = (id)=>{
+    const activeCOdeSpan = document.getElementById(id);
+    const range = document.createRange();
+
+    range.selectNodeContents(activeCOdeSpan);
+    window.getSelection().addRange(range);
+    const tag = document.execCommand("Copy");
+    if(tag){
+      message.success('已复制到剪切板');
+    }
+  }
 
   formatParams = (paramsData) => {
     return paramsData
@@ -54,6 +102,7 @@ class Creator extends Component {
 
   render() {
     const { columns } = this;
+    const {editData} = this.state;
     return (
       <PageContainer>
         <ProTable
@@ -61,7 +110,7 @@ class Creator extends Component {
           search={false}
           columns={columns}
           toolBarRender={() => [
-            <Button type="primary" size="small" key={1}>
+            <Button type="primary" size="small" key={1} onClick={()=>this.handleEdit(1)}>
               <PlusOutlined /> 新增
             </Button>,
           ]}
@@ -85,6 +134,7 @@ class Creator extends Component {
             fullScreen: false
           }}
         />
+        <EditModal ref={this.EditModalRef} editData={editData}/>
       </PageContainer>
     )
   }

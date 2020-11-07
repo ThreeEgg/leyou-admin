@@ -1,0 +1,3 @@
+.center :global .anticon {
+  margin-top: 12px;
+}

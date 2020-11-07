@@ -1,16 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined, FormOutlined, } from '@ant-design/icons'
+import { PlusOutlined, } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
 import { getList } from '@/services/common'
-import {history} from "umi";
+import { history } from "umi";
+import EditModal from "./components/EditModal"
 
 class MerchandiseManage extends Component {
 
   state = {
-
+    editData: {}
   }
+
+  EditModalRef = createRef()
 
   columns = [
     {
@@ -20,28 +23,20 @@ class MerchandiseManage extends Component {
       fixed: true
     },
     {
-      title: '商品名称',
+      title: '分类名称',
       dataIndex: '1',
     },
     {
-      title: '所属分类',
+      title: '商品类型',
+      dataIndex: '1',
+    },
+    {
+      title: '包含商品',
       dataIndex: '2',
     },
     {
-      title: '商品类型',
-      dataIndex: '3',
-    },
-    {
-      title: '剩余库存(总)',
-      dataIndex: '4',
-    },
-    {
-      title: '单价',
-      dataIndex: '5',
-    },
-    {
       title: '状态',
-      dataIndex: '6',
+      dataIndex: '3',
     },
     {
       title: '操作',
@@ -49,30 +44,39 @@ class MerchandiseManage extends Component {
       search: false,
       fixed: 'right',
       width: 80,
-      render: () => (
+      render: (_, item) => (
         <Space>
+          <Button type="link" size="small" >排序</Button>
           <Button type="link" size="small" >上架</Button>
-          <Button type="link" size="small" >编辑</Button>
-          <Button type="link" size="small" >品类管理</Button>
-          <Button type="link" size="small" >合同管理</Button>
+          <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
+          <Button type="link" size="small" onClick={() => this.gotoClassManage()}>查看全部</Button>
           <Button type="link" size="small" danger>删除</Button>
         </Space>
       ),
     },
   ]
 
+  handleEdit = (flag, editData) => {
+    this.setState({
+      editData
+    }, () => {
+      this.EditModalRef.current.handleOk()
+    })
+  }
+
   formatParams = (paramsData) => {
     return paramsData
   }
 
-  gotoClassManage = ()=>{
+  gotoClassManage = () => {
     history.push({
-      pathname:`/merchandiseManage/classifyManage`
+      pathname: `/merchandiseManage/productManage`
     })
   }
 
   render() {
     const { columns } = this;
+    const { editData } = this.state;
     return (
       <PageContainer>
         <ProTable
@@ -80,10 +84,7 @@ class MerchandiseManage extends Component {
           search={false}
           columns={columns}
           toolBarRender={() => [
-            <Button type="primary" size="small" key={2} onClick={this.gotoClassManage}>
-              <FormOutlined /> 分类管理
-            </Button>,
-            <Button type="primary" size="small" key={1}>
+            <Button type="primary" size="small" key={1} onClick={() => this.handleEdit(1)}>
               <PlusOutlined /> 新增
             </Button>,
           ]}
@@ -107,6 +108,7 @@ class MerchandiseManage extends Component {
             fullScreen: false
           }}
         />
+        <EditModal ref={this.EditModalRef} editData={editData} />
       </PageContainer>
     )
   }

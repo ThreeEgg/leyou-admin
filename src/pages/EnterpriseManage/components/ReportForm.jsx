@@ -53,7 +53,7 @@ class ReportForm extends Component {
       }
     },
     {
-      title: '科目余额表',
+      title: '现金流量表',
       dataIndex: '3',
       render:()=>{
         <Button type="link">下载</Button>
