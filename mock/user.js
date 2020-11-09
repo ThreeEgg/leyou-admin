@@ -4,7 +4,7 @@ function getFakeCaptcha(req, res) {
 
 export default {
   // 支持值为 Object 和 Array
-  'GET /api/currentUser': {
+  'GET /v1/currentUser': {
     name: 'Serati Ma',
     avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
     userid: '00000001',

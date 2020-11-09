@@ -16,7 +16,7 @@ class Contract extends Component {
       title: '序号',
       valueType: 'index',
       width: 48,
-      fixed: true
+      fixed: 'left'
     },
     {
       title: '订单编号',
@@ -52,7 +52,7 @@ class Contract extends Component {
     const { columns } = this;
     return (
       <PageContainer
-        title={<PageBack title="查看合同"></PageBack> }
+        title={<PageBack title="查看合同"></PageBack>}
       >
         <ProTable
           // actionRef={this.actionRef}

@@ -17,7 +17,7 @@ class OrderManage extends Component {
       title: '序号',
       valueType: 'index',
       width: 48,
-      fixed: true
+      fixed: 'left'
     },
     {
       title: '订单编号',

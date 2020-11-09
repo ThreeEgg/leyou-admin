@@ -20,7 +20,7 @@ class ProductManage extends Component {
       title: '序号',
       valueType: 'index',
       width: 48,
-      fixed: true
+      fixed: 'left'
     },
     {
       title: '商品名称',

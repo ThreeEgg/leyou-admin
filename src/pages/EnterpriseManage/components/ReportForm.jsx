@@ -16,7 +16,7 @@ class ReportForm extends Component {
       title: '序号',
       valueType: 'index',
       width: 48,
-      fixed: true
+      fixed: 'left'
     },
     {
       title: '月份',
@@ -41,21 +41,21 @@ class ReportForm extends Component {
     {
       title: '资产负债表',
       dataIndex: '3',
-      render:()=>{
+      render: () => {
         <Button type="link">下载</Button>
       }
     },
     {
       title: '利润表',
       dataIndex: '3',
-      render:()=>{
+      render: () => {
         <Button type="link">下载</Button>
       }
     },
     {
       title: '现金流量表',
       dataIndex: '3',
-      render:()=>{
+      render: () => {
         <Button type="link">下载</Button>
       }
     },
@@ -82,7 +82,7 @@ class ReportForm extends Component {
     const { columns } = this;
     return (
       <PageContainer
-        title={<PageBack title="全部报表"></PageBack> }
+        title={<PageBack title="全部报表"></PageBack>}
       >
         <ProTable
           // actionRef={this.actionRef}
