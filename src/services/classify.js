@@ -25,3 +25,7 @@ export const updateClassify = async params =>{
 export const deleteClassify = async (params) => {
   return request(`${api.deleteClassify}?${qs.stringify(params)}`);
 }
+
+export const getFirstClassifyList = async ()=>{
+  return request(`${api.firstClassifyList}`)
+}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Modal, Form, Input, Radio, message, InputNumber, } from 'antd';
-import { addClassify, updateClassify, } from "@/services/classify"
+import { Modal, Form, Input, DatePicker, message, InputNumber, } from 'antd';
+import { addClassify, } from "@/services/classify"
 
 class EditModal extends Component {
 
@@ -23,15 +23,12 @@ class EditModal extends Component {
   onFinish = paramsData => {
     const { editData } = this.props;
     const params = paramsData;
-    if (editData.id) {
+    /* if (editData.id) {
       params.id = editData.id;
       this.updateClassify(params);
     } else {
-      params.parentId = 0;
-      // params.sort = 0;
-      params.isSale = 1;
       this.addClassify(params);
-    }
+    } */
     console.log('params', params);
   }
 
@@ -46,56 +43,49 @@ class EditModal extends Component {
     }
   }
 
-  updateClassify = async params => {
-    const { success, msg } = await updateClassify(params);
-    if (success) {
-      message.success('修改成功');
-      this.handleCancel();
-      this.props.reload();
-    } else {
-      message.error(msg)
-    }
-  }
-
   render() {
     const { visible } = this.state;
     const { editData } = this.props;
     return (
       <Modal
-        title={editData.id ? "更新" : "新增"}
+        title="提交信息"
         visible={visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         okButtonProps={{
           htmlType: 'submit',
-          form: 'classifyForm'
+          form: 'orderForm'
         }}
         destroyOnClose
       >
-        <Form name="classifyForm" onFinish={this.onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} initialValues={editData}>
-          <Form.Item label="名称" name="typeName"
+        <Form name="orderForm" onFinish={this.onFinish} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} initialValues={editData}>
+          <Form.Item label="快递公司" name="typeName1"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
-            <Input placeholder="请输入名称" />
+            <Input placeholder="请输入" maxLength={20} />
           </Form.Item>
-          <Form.Item label="类型" name="isService"
+          <Form.Item label="快递单号" name="typeName2"
+            rules={[
+              { required: true, message: '请输入' }
+            ]}
+          >
+            <Input placeholder="请输入" maxLength={20} />
+          </Form.Item>
+          <Form.Item label="服务到期时间" name="typeName3"
             rules={[
               { required: true, message: '请选择' }
             ]}
           >
-            <Radio.Group >
-              <Radio value={0}>实物商品</Radio>
-              <Radio value={1}>服务商品</Radio>
-            </Radio.Group>
+            <DatePicker />
           </Form.Item>
-          <Form.Item label="排序" name="sort"
+          <Form.Item label="订单金额" name="typeName4"
             rules={[
-              { required: true, message: '请输入' }
+              { required: true, message: '请选择' }
             ]}
           >
-            <InputNumber placeholder="请输入" precision={0} min={-999} max={999} />
+            <InputNumber precision={2} min={0} max={9999999} />
           </Form.Item>
         </Form>
       </Modal>

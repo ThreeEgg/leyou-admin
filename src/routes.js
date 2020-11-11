@@ -130,7 +130,7 @@ export default [
           },
           {
             path: '/fundRecord',
-            name: '资金流水',
+            name: '簿记豆流水',
             icon: 'table',
             component: './FundRecord',
           },

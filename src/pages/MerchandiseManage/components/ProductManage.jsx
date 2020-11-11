@@ -1,19 +1,23 @@
 import React, { Component, createRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined, } from '@ant-design/icons'
+import { PlusOutlined, ExclamationCircleOutlined, } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
-import { Button, Space, } from 'antd'
-import { getList } from '@/services/common'
+import { Button, Space, Modal, message, } from 'antd'
+import { getGoodList, handleGood, deleteGood, } from '@/services/merchandise'
 import PageBack from "@/components/PageBack"
 import ProduceEditModal from "./ProductEditModal"
+import { getStateByParams } from "@/utils/tools"
 
+const { confirm } = Modal;
 class ProductManage extends Component {
 
   state = {
-    editData: {}
+    editData: {},
+    total: 0
   }
 
-  ProduceEditModalRef = createRef()
+  ProduceEditModalRef = createRef();
+  actionRef = createRef()
 
   columns = [
     {
@@ -24,11 +28,11 @@ class ProductManage extends Component {
     },
     {
       title: '商品名称',
-      dataIndex: '1',
+      dataIndex: 'goodsName',
     },
     {
       title: '商品分类',
-      dataIndex: '2',
+      dataIndex: 'typeName',
     },
     {
       title: '品类数量',
@@ -36,33 +40,87 @@ class ProductManage extends Component {
     },
     {
       title: '实际销售数量',
-      dataIndex: '4',
+      dataIndex: 'countTemp',
     },
     {
       title: '展示销售数量',
-      dataIndex: '5',
+      dataIndex: 'salesCount',
     },
     {
       title: '状态',
-      dataIndex: '6',
+      dataIndex: 'isSale',
+      valueEnum: {
+        0: '已下架',
+        1: '上架中'
+      }
     },
     {
       title: '操作',
-      dataIndex: '4',
+      dataIndex: 'id',
       search: false,
       fixed: 'right',
       width: 80,
       render: (_, item) => (
         <Space>
           <Button type="link" size="small" >排序</Button>
-          <Button type="link" size="small" >上架</Button>
+          <Button type="link" size="small" onClick={() => this.handleConfirm(1, item)}>{item.isSale === 0 ? '上架' : '下架'}</Button>
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
           <Button type="link" size="small" >销售数量修改</Button>
-          <Button type="link" size="small" danger>删除</Button>
+          <Button type="link" size="small" danger onClick={() => this.handleConfirm(2, item)}>删除</Button>
         </Space>
       ),
     },
   ]
+
+  handleConfirm = (flag, item) => {
+    let params = {};
+    let content = "";
+    let fun = "";
+    if (flag === 2) {
+      params = {
+        id: item.id
+      }
+      content = "确认删除该商品？";
+      fun = "deleteGood"
+    } else {
+      params = {
+        id: item.id,
+        isSale: item.isSale ? '0' : '1'
+      }
+      content = `确认${params.isSale === '1' ? '上架' : '下架'}该商品？`;
+      fun = "handleGood"
+    }
+    confirm({
+      title: '确认操作',
+      icon: <ExclamationCircleOutlined />,
+      content,
+      onOk: () => {
+        this[fun](params);
+      },
+      onCancel() {
+      },
+    })
+  }
+
+  deleteGood = async params => {
+    const { success, msg } = await deleteGood(params);
+    if (success) {
+      message.success(`删除成功`);
+      this.reload();
+    } else {
+      message.error(msg)
+    }
+  }
+
+  handleGood = async params => {
+    const { success, msg } = await handleGood(params);
+    if (success) {
+      message.success(`${params.isSale === '1' ? '上架' : '下架'}成功`);
+      this.reload();
+    } else {
+      message.error(msg)
+    }
+  }
 
   handleEdit = (flag, editData) => {
     this.setState({
@@ -73,19 +131,33 @@ class ProductManage extends Component {
   }
 
   formatParams = (paramsData) => {
-    return paramsData
+    const params = paramsData;
+    const type = getStateByParams('type');
+    if (type) {
+      params.type = type;
+    }
+    params.currentPage = params.current;
+    delete params.current;
+    return params
+  }
+
+  reload = () => {
+    if (this.actionRef.current) {
+      this.actionRef.current.reload()
+    }
   }
 
   render() {
     const { columns } = this;
-    const { editData } = this.state;
+    const { editData, total, } = this.state;
     return (
       <PageContainer
         title={<PageBack title="商品管理"></PageBack>}
       >
         <ProTable
-          // actionRef={this.actionRef}
+          actionRef={this.actionRef}
           search={false}
+          rowKey="id"
           columns={columns}
           toolBarRender={() => [
             <Button type="primary" size="small" key={1} onClick={() => this.handleEdit(1)}>
@@ -95,15 +167,17 @@ class ProductManage extends Component {
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
 
-            return getList(params)
+            return getGoodList(params)
           }}
           postData={(data) => {
             if (data) {
+              this.setState({ total: data.total })
               return data.list
             }
             return []
           }}
           pagination={{
+            total,
             showQuickJumper: true,
             showLessItems: true,
             showSizeChanger: true,

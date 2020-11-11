@@ -31,7 +31,11 @@ class MerchandiseManage extends Component {
     },
     {
       title: '商品类型',
-      dataIndex: 'parentName',
+      dataIndex: 'isService',
+      valueEnum: {
+        0: '实物类产品',
+        1: '服务类产品'
+      }
     },
     {
       title: '包含商品',
@@ -46,6 +50,10 @@ class MerchandiseManage extends Component {
       }
     },
     {
+      title: '排序权重',
+      dataIndex: 'sort',
+    },
+    {
       title: '操作',
       dataIndex: 'id',
       search: false,
@@ -53,14 +61,14 @@ class MerchandiseManage extends Component {
       width: 80,
       render: (_, item) => (
         <Space>
-          <Button type="link" size="small" >排序</Button>
+          {/* <Button type="link" size="small" >排序</Button> */}
           {
             item.isSale === 1 ? <Button type="link" size="small" onClick={() => this.handleConfirm(0, item.id)}>下架</Button>
               :
               <Button type="link" size="small" onClick={() => this.handleConfirm(1, item.id)}>上架</Button>
           }
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
-          <Button type="link" size="small" onClick={() => this.gotoClassManage()}>查看全部</Button>
+          <Button type="link" size="small" onClick={() => this.gotoClassManage(item.id)}>查看全部</Button>
           <Button type="link" size="small" danger onClick={() => this.handleConfirm(2, item.id)}>删除</Button>
         </Space>
       ),
@@ -133,9 +141,12 @@ class MerchandiseManage extends Component {
     return params
   }
 
-  gotoClassManage = () => {
+  gotoClassManage = (type) => {
     history.push({
-      pathname: `/merchandiseManage/productManage`
+      pathname: `/merchandiseManage/productManage`,
+      state: {
+        type
+      }
     })
   }
 
