@@ -1,11 +1,20 @@
 import React, { Component, createRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { PlusOutlined, ExclamationCircleOutlined, } from '@ant-design/icons'
+import { PlusOutlined, ExclamationCircleOutlined, MenuOutlined, } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, Modal, message, } from 'antd'
+import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
+
 import { getClassifyList, handleClassify, deleteClassify, } from '@/services/classify'
 import { history } from "umi";
 import EditModal from "./components/EditModal"
+const DragHandle = sortableHandle(() => (
+  <MenuOutlined style={{ cursor: 'pointer', color: '#999' }} />
+));
+const SortableItem = sortableElement(props => <tr {...props} />);
+const SortableContainer = sortableContainer(props => <tbody {...props} />);
+
 
 const { confirm } = Modal;
 class MerchandiseManage extends Component {
@@ -13,6 +22,7 @@ class MerchandiseManage extends Component {
   state = {
     editData: {},
     total: 0,
+    dataSource: []
   }
 
   EditModalRef = createRef()
@@ -20,14 +30,16 @@ class MerchandiseManage extends Component {
 
   columns = [
     {
-      title: '序号',
-      valueType: 'index',
-      width: 48,
-      fixed: 'left'
+      title: '排序',
+      dataIndex: 'sort',
+      width: 68,
+      className: 'drag-visible',
+      render: () => <DragHandle />,
     },
     {
       title: '分类名称',
       dataIndex: 'typeName',
+      className: 'drag-visible',
     },
     {
       title: '商品类型',
@@ -57,8 +69,8 @@ class MerchandiseManage extends Component {
       title: '操作',
       dataIndex: 'id',
       search: false,
-      fixed: 'right',
       width: 80,
+      className: 'drag-visible',
       render: (_, item) => (
         <Space>
           {/* <Button type="link" size="small" >排序</Button> */}
@@ -74,6 +86,23 @@ class MerchandiseManage extends Component {
       ),
     },
   ]
+
+  componentDidMount() {
+    this.getClassifyList();
+  }
+
+  getClassifyList = async () => {
+    const params = {
+      currentPage: 1,
+      pageSize: 20
+    }
+    const { data, success } = await getClassifyList(params);
+    if (success) {
+      this.setState({
+        dataSource: data.list
+      })
+    }
+  }
 
   handleConfirm = (flag, idsStr) => {
     let params = {};
@@ -156,9 +185,33 @@ class MerchandiseManage extends Component {
     }
   }
 
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    const { dataSource } = this.state;
+    if (oldIndex !== newIndex) {
+      const newData = arrayMove([].concat(dataSource), oldIndex, newIndex).filter(el => !!el);
+      console.log('Sorted items: ', newData);
+      this.setState({ dataSource: newData });
+    }
+  };
+
+  DraggableBodyRow = ({ className, style, ...restProps }) => {
+    const { dataSource } = this.state;
+    // function findIndex base on Table rowKey props and should always be a right array index
+    const index = dataSource.findIndex(x => x.id === restProps['data-row-key']);
+    return <SortableItem index={index} {...restProps} />;
+  };
+
   render() {
     const { columns } = this;
-    const { editData, total, } = this.state;
+    const { editData, total, dataSource, } = this.state;
+    const DraggableContainer = props => (
+      <SortableContainer
+        useDragHandle
+        helperClass="row-dragging"
+        onSortEnd={this.onSortEnd}
+        {...props}
+      />
+    );
     return (
       <PageContainer>
         <ProTable
@@ -171,26 +224,16 @@ class MerchandiseManage extends Component {
               <PlusOutlined /> 新增
             </Button>,
           ]}
-          request={(paramsData, sorter) => {
-            const params = this.formatParams(paramsData, sorter)
-
-            return getClassifyList(params)
-          }}
-          postData={(data) => {
-            if (data) {
-              this.setState({ total: data.total })
-              return data.list
-            }
-            return []
-          }}
-          pagination={{
-            total,
-            showQuickJumper: true,
-            showLessItems: true,
-            showSizeChanger: true,
-          }}
+          pagination={false}
           options={{
             fullScreen: false
+          }}
+          dataSource={dataSource}
+          components={{
+            body: {
+              wrapper: DraggableContainer,
+              row: this.DraggableBodyRow,
+            },
           }}
         />
         <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} />
