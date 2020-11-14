@@ -71,11 +71,11 @@ class FundRecord extends Component {
           // actionRef={this.actionRef}
           search={false}
           columns={columns}
-          toolBarRender={() => [
-            <Button type="primary" size="small" key={1}>
-              <PlusOutlined /> 新增
-            </Button>,
-          ]}
+          // toolBarRender={() => [
+          //   <Button type="primary" size="small" key={1}>
+          //     <PlusOutlined /> 新增
+          //   </Button>,
+          // ]}
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
 

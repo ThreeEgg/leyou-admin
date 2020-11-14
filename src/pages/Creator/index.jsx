@@ -68,6 +68,8 @@ class Creator extends Component {
       title: '确认操作',
       icon: <ExclamationCircleOutlined />,
       content,
+      okText: "确认",
+      cancelText: "取消",
       onOk: () => {
 
       },

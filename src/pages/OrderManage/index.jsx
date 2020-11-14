@@ -15,7 +15,8 @@ class OrderManage extends Component {
   state = {
     editData: {},
     total: 0,
-    firstClassifyList: []
+    firstClassifyList: [],
+    flag: 0,
   }
 
   EditModalRef = createRef()
@@ -112,23 +113,23 @@ class OrderManage extends Component {
       render: (_, item) => (
         <Space>
           {
-            (item.orderStatus === 0 || item.orderStatus === 1) && item.typeName !== "服务类产品" &&
+            (item.orderStatus === 0 || item.orderStatus === 1) && item.typeName !== "实物类产品" &&
             <Button type="link" size="small" onClick={() => this.handleConfirm(item)}>变更状态</Button>
           }
           {
-            item.orderStatus === 0 && item.typeName !== "服务类产品" && <Button type="link" size="small" >修改金额</Button>
+            item.orderStatus === 0 && item.typeName !== "实物类产品" && <Button type="link" size="small" onClick={() => { this.handleModal(3, item) }}>修改金额</Button>
           }
           {
-            item.orderStatus === 1 && item.typeName !== "服务类产品" && <>
+            item.orderStatus === 1 && item.typeName !== "实物类产品" && <>
               <Button type="link" size="small" >商品活动</Button>
-              <Button type="link" size="small" >服务时间设置</Button>
+              <Button type="link" size="small" onClick={() => { this.handleModal(2, item) }}>服务时间设置</Button>
             </>
           }
           {
-            item.typeName === "服务类产品" && <Button type="link" size="small" >上传快递单号</Button>
+            item.typeName === "实物类产品" && <Button type="link" size="small" onClick={() => { this.handleModal(1, item) }}>上传快递单号</Button>
           }
           {
-            item.typeName != "服务类产品" && <Button type="link" size="small" >查看合同</Button>
+            item.typeName !== "实物类产品" && <Button type="link" size="small" onClick={() => this.viewContract(item.agreementLink)}>查看合同</Button>
           }
 
         </Space>
@@ -138,6 +139,20 @@ class OrderManage extends Component {
 
   componentDidMount() {
     this.getFirstClassifyList()
+  }
+
+  handleModal = (flag, editData) => {
+    this.setState({
+      flag, editData,
+    }, () => {
+      this.EditModalRef.current.handleOk()
+    })
+  }
+
+  viewContract = (url) => {
+    if (url) {
+      window.open(url)
+    }
   }
 
   getFirstClassifyList = async () => {
@@ -160,6 +175,8 @@ class OrderManage extends Component {
       title: '确认操作',
       icon: <ExclamationCircleOutlined />,
       content: `确认将状态变更为${item.orderStatus === 0 ? '已完成' : '已失效'}？`,
+      okText: "确认",
+      cancelText: "取消",
       onOk: () => {
         this.handleOrderStatus(params);
       },
@@ -199,13 +216,14 @@ class OrderManage extends Component {
 
   render() {
     const { columns } = this;
-    const { editData, total, } = this.state;
+    const { editData, total, flag, } = this.state;
     return (
       <PageContainer>
         <ProTable
           actionRef={this.actionRef}
           // search={false}
           columns={columns}
+          rowKey="id"
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
 
@@ -228,7 +246,7 @@ class OrderManage extends Component {
             fullScreen: false
           }}
         />
-        <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} />
+        <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} flag={flag} />
       </PageContainer>
     )
   }

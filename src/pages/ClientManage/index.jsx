@@ -79,9 +79,9 @@ class ClientManage extends Component {
       width: 80,
       render: (_, item) => (
         <Space>
-          <Button type="link" size="small" onClick={this.gotoFundChange}>簿记豆变更</Button>
+          <Button type="link" size="small" onClick={() => this.gotoFundChange(item.id)}>簿记豆变更</Button>
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
-          <Button type="link" size="small" onClick={this.gotoContract}>查看合同</Button>
+          <Button type="link" size="small" onClick={() => this.gotoContract(item.id)}>查看合同</Button>
         </Space>
       ),
     },
@@ -98,15 +98,21 @@ class ClientManage extends Component {
     })
   }
 
-  gotoFundChange = () => {
+  gotoFundChange = (id) => {
     history.push({
-      pathname: `/clientManage/FundChange`
+      pathname: `/clientManage/FundChange`,
+      state: {
+        userId: id
+      }
     })
   }
 
-  gotoContract = () => {
+  gotoContract = (id) => {
     history.push({
-      pathname: `/clientManage/contract`
+      pathname: `/clientManage/contract`,
+      state: {
+        userId: id
+      }
     })
   }
 

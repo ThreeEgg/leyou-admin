@@ -26,3 +26,13 @@ export const updateCompany = async params =>{
     data:params
   })
 }
+
+export const getReportList = async params =>{
+  return request(`${api.reportList}?${qs.stringify(params)}`);
+}
+
+export const updateReport = async params =>{
+  return request.post(`${api.updateReport}`,{
+    data:params
+  })
+}

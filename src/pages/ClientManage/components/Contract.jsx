@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
-import { getList } from '@/services/common'
+import { getContractList } from '@/services/client'
 import PageBack from "@/components/PageBack"
+import { getStateByParams } from "@/utils/tools"
 
 class Contract extends Component {
 
   state = {
-
+    total: 0
   }
 
   columns = [
@@ -20,36 +21,50 @@ class Contract extends Component {
     },
     {
       title: '订单编号',
-      dataIndex: '1',
+      dataIndex: 'orderNumber',
     },
     {
       title: '完成时间',
-      dataIndex: '2',
+      dataIndex: 'payTime',
     },
     {
       title: '商品名称',
-      dataIndex: '3',
+      dataIndex: 'goodsName',
     },
     {
       title: '操作',
-      dataIndex: '4',
+      dataIndex: 'agreementLink',
       search: false,
       fixed: 'right',
       width: 80,
-      render: () => (
+      render: (url) => (
         <Space>
-          <Button type="link" size="small" >查看合同</Button>、
+          <Button type="link" size="small" onClick={() => this.viewContract(url)}>查看合同</Button>、
         </Space>
       ),
     },
   ]
 
+  viewContract = (url) => {
+    if (url) {
+      window.open(url)
+    }
+  }
+
   formatParams = (paramsData) => {
-    return paramsData
+    const params = paramsData;
+    params.currentPage = params.current;
+    delete params.current;
+    const userId = getStateByParams('userId');
+    if (userId) {
+      params.userId = userId;
+    }
+    return params
   }
 
   render() {
     const { columns } = this;
+    const { total, } = this.state;
     return (
       <PageContainer
         title={<PageBack title="查看合同"></PageBack>}
@@ -61,15 +76,17 @@ class Contract extends Component {
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
 
-            return getList(params)
+            return getContractList(params)
           }}
           postData={(data) => {
             if (data) {
+              this.setState({ total: data.total })
               return data.list
             }
             return []
           }}
           pagination={{
+            total,
             showQuickJumper: true,
             showLessItems: true,
             showSizeChanger: true,

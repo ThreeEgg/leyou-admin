@@ -3,12 +3,14 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { PlusOutlined, ExclamationCircleOutlined, MenuOutlined, } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, Modal, message, } from 'antd'
-import { getGoodList, handleGood, deleteGood, } from '@/services/merchandise'
+import { getGoodList, handleGood, deleteGood, goodSort, getGoodDetail, } from '@/services/merchandise'
 import PageBack from "@/components/PageBack"
 import ProduceEditModal from "./ProductEditModal"
+import CountEdit from './CountEdit'
 import { getStateByParams } from "@/utils/tools"
 import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import { create } from 'lodash';
 const DragHandle = sortableHandle(() => (
   <MenuOutlined style={{ cursor: 'pointer', color: '#999' }} />
 ));
@@ -21,11 +23,14 @@ class ProductManage extends Component {
 
   state = {
     editData: {},
+    countEditData: {},
     total: 0,
     dataSource: [],
+    loading: false,
   }
 
   ProduceEditModalRef = createRef();
+  CountEditRef = createRef()
   actionRef = createRef()
 
   columns = [
@@ -47,7 +52,7 @@ class ProductManage extends Component {
     },
     {
       title: '品类数量',
-      dataIndex: '3',
+      dataIndex: 'detailCount',
     },
     {
       title: '实际销售数量',
@@ -76,7 +81,7 @@ class ProductManage extends Component {
           <Button type="link" size="small" >排序</Button>
           <Button type="link" size="small" onClick={() => this.handleConfirm(1, item)}>{item.isSale === 0 ? '上架' : '下架'}</Button>
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
-          <Button type="link" size="small" >销售数量修改</Button>
+          <Button type="link" size="small" onClick={() => this.handleCountEdit(item)}>销售数量修改</Button>
           <Button type="link" size="small" danger onClick={() => this.handleConfirm(2, item)}>删除</Button>
         </Space>
       ),
@@ -88,14 +93,20 @@ class ProductManage extends Component {
   }
 
   getGoodList = async () => {
-    const params = {
-      currentPage: 1,
-      pageSize: 20
+    this.setState({
+      loading: true
+    })
+    let params = {};
+    const type = getStateByParams('type');
+    if (type) {
+      params.type = type;
     }
+
     const { data, success } = await getGoodList(params);
     if (success) {
       this.setState({
-        dataSource: data.list
+        dataSource: data,
+        loading: false
       })
     }
   }
@@ -122,6 +133,8 @@ class ProductManage extends Component {
       title: '确认操作',
       icon: <ExclamationCircleOutlined />,
       content,
+      okText: "确认",
+      cancelText: "取消",
       onOk: () => {
         this[fun](params);
       },
@@ -150,12 +163,38 @@ class ProductManage extends Component {
     }
   }
 
-  handleEdit = (flag, editData) => {
+  getGoodDetail = async (id) => {
+    const { success, data } = await getGoodDetail({ id });
+    if (success) {
+      this.setState({
+        editData: data
+      }, () => {
+        this.ProduceEditModalRef.current.handleOk()
+      })
+    } else {
+      message.error('获取商品详情失败')
+    }
+  }
+
+  handleCountEdit = (countEditData) => {
     this.setState({
-      editData
+      countEditData
     }, () => {
-      this.ProduceEditModalRef.current.handleOk()
+      this.CountEditRef.current.handleOk()
     })
+  }
+
+  handleEdit = (flag, editData) => {
+    if (flag === 1) {
+      this.setState({
+        editData
+      }, () => {
+        this.ProduceEditModalRef.current.handleOk()
+      })
+    } else {
+      this.getGoodDetail(editData.id)
+    }
+
   }
 
   formatParams = (paramsData) => {
@@ -170,8 +209,13 @@ class ProductManage extends Component {
   }
 
   reload = () => {
-    if (this.actionRef.current) {
-      this.actionRef.current.reload()
+    this.getGoodList()
+  }
+
+  goodSort = async (params) => {
+    const { success } = await goodSort(params);
+    if (success) {
+      this.reload()
     }
   }
 
@@ -179,7 +223,17 @@ class ProductManage extends Component {
     const { dataSource } = this.state;
     if (oldIndex !== newIndex) {
       const newData = arrayMove([].concat(dataSource), oldIndex, newIndex).filter(el => !!el);
-      console.log('Sorted items: ', newData);
+      this.setState({
+        loading: true
+      })
+      const params = [];
+      newData.forEach((item, index) => {
+        params.push({
+          id: item.id,
+          sort: index
+        })
+      })
+      this.goodSort(params)
       this.setState({ dataSource: newData });
     }
   };
@@ -193,7 +247,7 @@ class ProductManage extends Component {
 
   render() {
     const { columns } = this;
-    const { editData, total, dataSource, } = this.state;
+    const { editData, countEditData, dataSource, loading, } = this.state;
     const DraggableContainer = props => (
       <SortableContainer
         useDragHandle
@@ -218,8 +272,12 @@ class ProductManage extends Component {
           ]}
           pagination={false}
           options={{
-            fullScreen: false
+            fullScreen: false,
+            reload: () => {
+              this.getGoodList()
+            }
           }}
+          loading={loading}
           dataSource={dataSource}
           components={{
             body: {
@@ -228,7 +286,8 @@ class ProductManage extends Component {
             },
           }}
         />
-        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} />
+        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} reload={this.reload} />
+        <CountEdit ref={this.CountEditRef} editData={countEditData} reload={this.reload}></CountEdit>
       </PageContainer>
     )
   }

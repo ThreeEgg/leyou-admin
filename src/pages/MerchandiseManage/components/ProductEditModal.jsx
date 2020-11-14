@@ -14,44 +14,7 @@ class ProduceEditModal extends Component {
     visible: false,
     loading: false,
     imageUrl: "",
-    fileList: [
-      {
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-2',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-3',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-4',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-xxx',
-        percent: 50,
-        name: 'image.png',
-        status: 'uploading',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-5',
-        name: 'image.png',
-        status: 'error',
-      },
-    ],
+    fileList: [],
   }
 
   handleOk = () => {
@@ -75,6 +38,7 @@ class ProduceEditModal extends Component {
 
   render() {
     const { visible, loading, imageUrl, fileList, } = this.state;
+    const { editData } = this.props;
     const uploadButton = (
       <div>
         {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -83,7 +47,7 @@ class ProduceEditModal extends Component {
     );
     return (
       <Modal
-        title="新增"
+        title={editData.id ? '编辑' : '新增' + '商品'}
         width="60%"
         visible={visible}
         onOk={this.handleOk}
@@ -96,15 +60,15 @@ class ProduceEditModal extends Component {
         destroyOnClose
         maskClosable={false}
       >
-        <Form name="productForm" onFinish={this.onFinish} labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
-          <Form.Item label="名称" name="name"
+        <Form name="productForm" onFinish={this.onFinish} labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} initialValues={editData}>
+          <Form.Item label="名称" name="goodsName"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
             <Input placeholder="请输入名称" maxLength={20} />
           </Form.Item>
-          <Form.Item label="分类" name="x"
+          <Form.Item label="分类" name="typeName"
             rules={[
               { required: true, message: '请选择' }
             ]}

@@ -6,7 +6,7 @@ import { Button, Space, Modal, message, } from 'antd'
 import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
-import { getClassifyList, handleClassify, deleteClassify, } from '@/services/classify'
+import { getClassifyList, handleClassify, deleteClassify, classifySort, } from '@/services/classify'
 import { history } from "umi";
 import EditModal from "./components/EditModal"
 const DragHandle = sortableHandle(() => (
@@ -22,7 +22,8 @@ class MerchandiseManage extends Component {
   state = {
     editData: {},
     total: 0,
-    dataSource: []
+    dataSource: [],
+    loading: false,
   }
 
   EditModalRef = createRef()
@@ -62,10 +63,6 @@ class MerchandiseManage extends Component {
       }
     },
     {
-      title: '排序权重',
-      dataIndex: 'sort',
-    },
-    {
       title: '操作',
       dataIndex: 'id',
       search: false,
@@ -92,14 +89,15 @@ class MerchandiseManage extends Component {
   }
 
   getClassifyList = async () => {
-    const params = {
-      currentPage: 1,
-      pageSize: 20
-    }
+    this.setState({
+      loading: true,
+    })
+    const params = {}
     const { data, success } = await getClassifyList(params);
     if (success) {
       this.setState({
-        dataSource: data.list
+        dataSource: data,
+        loading: false
       })
     }
   }
@@ -126,6 +124,8 @@ class MerchandiseManage extends Component {
       title: '确认操作',
       icon: <ExclamationCircleOutlined />,
       content,
+      okText: "确认",
+      cancelText: "取消",
       onOk: () => {
         this[fun](params);
       },
@@ -180,8 +180,14 @@ class MerchandiseManage extends Component {
   }
 
   reload = () => {
-    if (this.actionRef.current) {
-      this.actionRef.current.reload()
+    console.log('this.actionRef.current', this.actionRef.current)
+    this.getClassifyList()
+  }
+
+  classifySort = async (params) => {
+    const { success } = await classifySort(params);
+    if (success) {
+      this.reload()
     }
   }
 
@@ -189,7 +195,18 @@ class MerchandiseManage extends Component {
     const { dataSource } = this.state;
     if (oldIndex !== newIndex) {
       const newData = arrayMove([].concat(dataSource), oldIndex, newIndex).filter(el => !!el);
-      console.log('Sorted items: ', newData);
+      // console.log('Sorted items: ', newData);
+      this.setState({
+        loading: true
+      })
+      const params = [];
+      newData.forEach((item, index) => {
+        params.push({
+          id: item.id,
+          sort: index
+        })
+      })
+      this.classifySort(params)
       this.setState({ dataSource: newData });
     }
   };
@@ -203,7 +220,7 @@ class MerchandiseManage extends Component {
 
   render() {
     const { columns } = this;
-    const { editData, total, dataSource, } = this.state;
+    const { editData, total, dataSource, loading, } = this.state;
     const DraggableContainer = props => (
       <SortableContainer
         useDragHandle
@@ -226,8 +243,12 @@ class MerchandiseManage extends Component {
           ]}
           pagination={false}
           options={{
-            fullScreen: false
+            fullScreen: false,
+            reload: () => {
+              this.getClassifyList()
+            }
           }}
+          loading={loading}
           dataSource={dataSource}
           components={{
             body: {

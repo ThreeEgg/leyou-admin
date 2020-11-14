@@ -17,3 +17,17 @@ export const updateClient = async params =>{
     data:params
   })
 }
+
+export const getBeansRecord = async (params) => {
+  return request(`${api.beansRecord}?${qs.stringify(params)}`);
+}
+
+export const getContractList = async (params) => {
+  return request(`${api.contractList}?${qs.stringify(params)}`);
+}
+
+export const addBeansRecord = async (params) => {
+  return request.post(`${api.addBeansRecord}`,{
+    data:params
+  });
+}

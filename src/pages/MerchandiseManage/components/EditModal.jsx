@@ -1,11 +1,28 @@
 import React, { Component } from 'react'
 import { Modal, Form, Input, Radio, message, InputNumber, } from 'antd';
-import { addClassify, updateClassify, } from "@/services/classify"
+import { addClassify, updateClassify, getFirstClassifyList, } from "@/services/classify"
+
 
 class EditModal extends Component {
 
   state = {
     visible: false,
+    firstClassifyList: [],
+  }
+
+  componentDidMount() {
+    this.getFirstClassifyList()
+  }
+
+  getFirstClassifyList = async () => {
+    const { success, msg, data, } = await getFirstClassifyList();
+    if (success) {
+      this.setState({
+        firstClassifyList: data
+      })
+    } else {
+      message.error(msg)
+    }
   }
 
   handleOk = () => {
@@ -22,13 +39,16 @@ class EditModal extends Component {
 
   onFinish = paramsData => {
     const { editData } = this.props;
+    const { firstClassifyList } = this.state;
     const params = paramsData;
     if (editData.id) {
       params.id = editData.id;
+      params.sort = editData.sort;
       this.updateClassify(params);
     } else {
-      params.parentId = 0;
-      // params.sort = 0;
+
+      params.parentId = firstClassifyList.find(item => item.isService === params.isService).id;
+      params.sort = 0;
       params.isSale = 1;
       this.addClassify(params);
     }
@@ -58,7 +78,7 @@ class EditModal extends Component {
   }
 
   render() {
-    const { visible } = this.state;
+    const { visible, } = this.state;
     const { editData } = this.props;
     return (
       <Modal
@@ -90,13 +110,13 @@ class EditModal extends Component {
               <Radio value={1}>服务商品</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="排序" name="sort"
+          {/* <Form.Item label="排序" name="sort"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
             <InputNumber placeholder="请输入" precision={0} min={-999} max={999} />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
     )

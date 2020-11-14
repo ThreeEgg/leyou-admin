@@ -86,7 +86,7 @@ class EnterpriseManage extends Component {
               <Button type="link" size="small" onClick={() => this.handleConfirm(1, item.id)}>启用</Button>
           }
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
-          <Button type="link" size="small" onClick={this.gotoReport}>全部报表</Button>
+          <Button type="link" size="small" onClick={() => this.gotoReport(item.id)}>全部报表</Button>
         </Space>
       ),
     },
@@ -101,6 +101,8 @@ class EnterpriseManage extends Component {
       title: '确认操作',
       icon: <ExclamationCircleOutlined />,
       content: `确认${params.isUsed === '1' ? '启用' : '停用'}该企业？`,
+      okText: "确认",
+      cancelText: "取消",
       onOk: () => {
         this.handleCompany(params);
       },
@@ -127,9 +129,12 @@ class EnterpriseManage extends Component {
     })
   }
 
-  gotoReport = () => {
+  gotoReport = (companyId) => {
     history.push({
-      pathname: `/enterpriseManage/reportForm`
+      pathname: `/enterpriseManage/reportForm`,
+      state: {
+        companyId
+      }
     })
   }
 

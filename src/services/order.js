@@ -15,3 +15,16 @@ export const addClassify = async params =>{
     data:params
   })
 }
+
+export const updateExpressInfo = async (params) => {
+  return request(`${api.updateExpressInfo}?${qs.stringify(params)}`);
+}
+
+export const updateServiceTime = async (params) => {
+  return request(`${api.updateServiceTime}?${qs.stringify(params)}`);
+}
+
+export const updateTotalPrice = async (params) => {
+  return request(`${api.updateTotalPrice}?${qs.stringify(params)}`);
+}
+

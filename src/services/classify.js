@@ -29,3 +29,9 @@ export const deleteClassify = async (params) => {
 export const getFirstClassifyList = async ()=>{
   return request(`${api.firstClassifyList}`)
 }
+
+export const classifySort = async params =>{
+  return request.post(`${api.classifySort}`,{
+    data:params
+  })
+}

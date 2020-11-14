@@ -14,6 +14,20 @@ export const deleteGood = async (params) => {
   return request(`${api.deleteGood}?${qs.stringify(params)}`);
 }
 
+export const countEdit = async (params) => {
+  return request(`${api.countEdit}?${qs.stringify(params)}`);
+}
+
+export const goodSort = async (params) => {
+  return request.post(`${api.goodSort}`,{
+    data:params
+  });
+}
+
+export const getGoodDetail = async (params) => {
+  return request(`${api.goodDetail}?${qs.stringify(params)}`);
+}
+
 export const updateCompany = async params =>{
   return request.post(`${api.updateCompany}`,{
     data:params
