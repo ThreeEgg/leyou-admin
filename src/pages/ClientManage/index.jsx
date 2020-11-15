@@ -73,7 +73,7 @@ class ClientManage extends Component {
     },
     {
       title: '操作',
-      dataIndex: '4',
+      dataIndex: 'id',
       search: false,
       fixed: 'right',
       width: 80,

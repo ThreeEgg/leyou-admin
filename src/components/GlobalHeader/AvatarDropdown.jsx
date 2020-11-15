@@ -4,6 +4,7 @@ import React from 'react';
 import { history, connect } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import avatar from "@/assets/images/avatar.png"
 
 class AvatarDropdown extends React.Component {
   onMenuClick = (event) => {
@@ -32,26 +33,26 @@ class AvatarDropdown extends React.Component {
     const {
       currentUser = {
         avatar: '',
-        name: '',
+        name: 'admin123456',
       },
     } = this.props;
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        <Menu.Item key="editPassword">
+        {/* <Menu.Item key="editPassword">
           <EditOutlined />
           修改密码
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item key="logout">
           <LogoutOutlined />
           退出登录
         </Menu.Item>
       </Menu>
     );
-    return currentUser && currentUser.name ? (
+    return currentUser ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-          <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+          <Avatar size="small" className={styles.avatar} src={currentUser.avatar || avatar} alt="avatar" />
+          <span className={`${styles.name} anticon`}>{currentUser.name || 'admin'}</span>
         </span>
       </HeaderDropdown>
     ) : (

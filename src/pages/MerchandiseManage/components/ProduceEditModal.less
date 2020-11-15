@@ -23,3 +23,32 @@
     }
   }
 }
+
+.uploader {
+  background: skyblue;
+  position: relative;
+
+  >span {
+    position: absolute;
+  }
+
+  >span:nth-of-type(2) {
+    right: -4px;
+  }
+
+  :global {
+    .anticon-plus {
+      cursor: pointer;
+    }
+
+    .ant-upload-list-item-uploading {
+      display: none;
+    }
+
+    .ant-upload-list-item {
+      position: absolute;
+      width: 104px;
+      height: 104px;
+    }
+  }
+}

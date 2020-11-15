@@ -9,7 +9,7 @@ export default {
   dev: {
     '/v1': {
       target: 'http://192.168.101.31:8999',
-      // target: '47.105.159.183:8998',
+      // target: 'http://47.105.159.183:8998',
       changeOrigin: true,
       
     },

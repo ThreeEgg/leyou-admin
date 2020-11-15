@@ -4,6 +4,7 @@ import { PlusOutlined, ExclamationCircleOutlined, MenuOutlined, } from '@ant-des
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, Modal, message, } from 'antd'
 import { getGoodList, handleGood, deleteGood, goodSort, getGoodDetail, } from '@/services/merchandise'
+import { getClassifyList } from "@/services/classify"
 import PageBack from "@/components/PageBack"
 import ProduceEditModal from "./ProductEditModal"
 import CountEdit from './CountEdit'
@@ -27,6 +28,7 @@ class ProductManage extends Component {
     total: 0,
     dataSource: [],
     loading: false,
+    classifyList: [],
   }
 
   ProduceEditModalRef = createRef();
@@ -89,7 +91,20 @@ class ProductManage extends Component {
   ]
 
   componentDidMount() {
-    this.getGoodList()
+    this.getGoodList();
+    this.getClassifyList();
+  }
+
+  getClassifyList = async () => {
+    const params = {
+      parentId: getStateByParams('parentId')
+    }
+    const { data, success } = await getClassifyList(params);
+    if (success) {
+      this.setState({
+        classifyList: data
+      })
+    }
   }
 
   getGoodList = async () => {
@@ -247,7 +262,7 @@ class ProductManage extends Component {
 
   render() {
     const { columns } = this;
-    const { editData, countEditData, dataSource, loading, } = this.state;
+    const { editData, countEditData, dataSource, loading, classifyList, } = this.state;
     const DraggableContainer = props => (
       <SortableContainer
         useDragHandle
@@ -266,7 +281,7 @@ class ProductManage extends Component {
           rowKey="id"
           columns={columns}
           toolBarRender={() => [
-            <Button type="primary" size="small" key={1} onClick={() => this.handleEdit(1)}>
+            <Button type="primary" size="small" key={1} onClick={() => this.handleEdit(1, {})}>
               <PlusOutlined /> 新增
             </Button>,
           ]}
@@ -286,7 +301,7 @@ class ProductManage extends Component {
             },
           }}
         />
-        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} reload={this.reload} />
+        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} reload={this.reload} classifyList={classifyList} />
         <CountEdit ref={this.CountEditRef} editData={countEditData} reload={this.reload}></CountEdit>
       </PageContainer>
     )

@@ -1,0 +1,31 @@
+.ProduceEditModal :global .ant-modal-content .ant-modal-body {
+  max-height: 576px;
+  overflow-y: auto;
+}
+.name {
+  padding-left: 64px;
+}
+.name :global .ant-space .ant-space-item {
+  width: 50%;
+}
+.uploader {
+  background: skyblue;
+  position: relative;
+}
+.uploader > span {
+  position: absolute;
+}
+.uploader > span:nth-of-type(2) {
+  right: -4px;
+}
+.uploader :global .anticon-plus {
+  cursor: pointer;
+}
+.uploader :global .ant-upload-list-item-uploading {
+  display: none;
+}
+.uploader :global .ant-upload-list-item {
+  position: absolute;
+  width: 104px;
+  height: 104px;
+}

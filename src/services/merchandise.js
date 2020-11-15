@@ -33,3 +33,17 @@ export const updateCompany = async params =>{
     data:params
   })
 }
+
+export const addGood = async params =>{
+  return request.post(`${api.addGood}`,{
+    data:params
+  })
+}
+
+export const updateGood = async params =>{
+  return request.post(`${api.updateGood}`,{
+    data:params
+  })
+}
+
+

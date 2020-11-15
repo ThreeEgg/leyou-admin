@@ -44,6 +44,9 @@ export default {
   goodSort:'/goodsInfo/updateBatchSort', // 商品排序
   goodDetail:'/goodsInfo/findGoodsInfoDetail', // 商品详情
 
+  addGood:'/goodsInfo/saveGoodsInfo', // 新增商品
+  updateGood:'/goodsInfo/updateGoodsInfo', // 更新商品
+
   /**
    * 订单部分接口
    */

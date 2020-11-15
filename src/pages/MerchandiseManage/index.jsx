@@ -77,7 +77,7 @@ class MerchandiseManage extends Component {
               <Button type="link" size="small" onClick={() => this.handleConfirm(1, item.id)}>上架</Button>
           }
           <Button type="link" size="small" onClick={() => this.handleEdit(2, item)}>编辑</Button>
-          <Button type="link" size="small" onClick={() => this.gotoClassManage(item.id)}>查看全部</Button>
+          <Button type="link" size="small" onClick={() => this.gotoClassManage(item)}>查看全部</Button>
           <Button type="link" size="small" danger onClick={() => this.handleConfirm(2, item.id)}>删除</Button>
         </Space>
       ),
@@ -170,11 +170,12 @@ class MerchandiseManage extends Component {
     return params
   }
 
-  gotoClassManage = (type) => {
+  gotoClassManage = (item) => {
     history.push({
       pathname: `/merchandiseManage/productManage`,
       state: {
-        type
+        type: item.id,
+        parentId: item.parentId
       }
     })
   }
