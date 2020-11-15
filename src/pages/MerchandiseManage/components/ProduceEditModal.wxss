@@ -24,8 +24,6 @@
 .uploader :global .ant-upload-list-item-uploading {
   display: none;
 }
-.uploader :global .ant-upload-list-item {
-  position: absolute;
-  width: 104px;
-  height: 104px;
+.uploader :global .ant-upload-list-item-list-type-text {
+  display: none;
 }

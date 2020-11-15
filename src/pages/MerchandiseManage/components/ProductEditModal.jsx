@@ -14,7 +14,8 @@ class ProduceEditModal extends Component {
   state = {
     visible: false,
     loading: false,
-    coverImageUrl: "",
+    cover: '',
+    coverLink: "",
     bannerFileList: [
       // {
       //   uid: '1',
@@ -34,6 +35,9 @@ class ProduceEditModal extends Component {
     previewImage: '',
     previewTitle: '',
     activityRadio: 0,
+    agreementId: "",
+    agreementLink: "",
+    agreementName: '',
   }
 
   componentDidMount() {
@@ -73,11 +77,20 @@ class ProduceEditModal extends Component {
     });
   };
 
-  handleChange = ({ file, fileList }) => {
-    console.log('file, fileList', file, fileList)
+  handleBannerChange = ({ file, fileList }) => {
+
     if (file.status === 'done' || file.status === 'removed') {
       this.setState({ bannerFileList: fileList })
     }
+    console.log('handleBannerChange', file, fileList)
+  };
+
+  handleDetailChange = ({ file, fileList }) => {
+
+    if (file.status === 'done' || file.status === 'removed') {
+      this.setState({ detailFileList: fileList })
+    }
+    console.log('handleDetailChange', file, fileList)
   };
 
   itemRender = (defaultRender, item) => {
@@ -86,8 +99,32 @@ class ProduceEditModal extends Component {
       <div className={styles.uploader} key={item.uid}>
         {defaultRender}
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          name="file"
+          action="/v1/upload/uploadFile"
+          data={{
+            type: 2,
+          }}
           onChange={(info) => this.handleItemChange(info, item.uid)}
+          beforeUpload={this.beforeItemUpload}
+        >
+          <PlusOutlined style={{ fontSize: 18 }} />
+        </Upload>
+      </div>
+    )
+  }
+
+  detailItemRender = (defaultRender, item) => {
+    return (
+
+      <div className={styles.uploader} key={item.uid}>
+        {defaultRender}
+        <Upload
+          name="file"
+          action="/v1/upload/uploadFile"
+          data={{
+            type: 3,
+          }}
+          onChange={(info) => this.handleDetailItemChange(info, item.uid)}
           beforeUpload={this.beforeItemUpload}
         >
           <PlusOutlined style={{ fontSize: 18 }} />
@@ -104,6 +141,7 @@ class ProduceEditModal extends Component {
   }
 
   beforeUpload = (file, size, fileType) => {
+    console.log('file', file)
     // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     const isJpgOrPng = !!fileType.find(item => item === file.type);
     if (!isJpgOrPng) {
@@ -122,6 +160,16 @@ class ProduceEditModal extends Component {
       const { bannerFileList } = this.state;
       bannerFileList.splice(bannerFileList.findIndex(file => file.uid === uid) + 1, 0, info.file);
       this.setState({ bannerFileList })
+    }
+
+  }
+
+  handleDetailItemChange = (info, uid) => {
+    console.log('handleItemChange', info, uid)
+    if (info.file.status === 'done') {
+      const { detailFileList } = this.state;
+      detailFileList.splice(detailFileList.findIndex(file => file.uid === uid) + 1, 0, info.file);
+      this.setState({ detailFileList })
     }
 
   }
@@ -146,8 +194,18 @@ class ProduceEditModal extends Component {
     });
   };
 
-  onFinish = params => {
+  onFinish = paramsData => {
+    const params = paramsData;
     console.log('params', params);
+    const { editData } = this.props;
+    const { cover, coverLink, agreementId, agreementLink, bannerFileList, detailFileList, } = this.state;
+    params.agreementId = agreementId;
+    params.agreementLink = agreementLink;
+    params.cover = cover;
+    params.coverLink = coverLink;
+    params.bannerFileList = bannerFileList;
+    params.detailFileList = detailFileList;
+    this.addGood(params)
   }
 
   addGood = async params => {
@@ -174,14 +232,51 @@ class ProduceEditModal extends Component {
 
   handleChange = ({ bannerFileList }) => this.setState({ bannerFileList });
 
-  handleCoverChange = (file) => {
+  handleCoverChange = ({ file }) => {
+    if (file.status === 'done') {
+      const { response: { success, data } } = file;
+      if (success) {
+        this.setState({
+          cover: data.id,
+          coverLink: data.link
+        })
+      } else {
+        this.setState({
+          cover: '',
+          coverLink: ''
+        })
+        message.error('图片上传失败')
+      }
+    }
     console.log(file);
+  }
+
+  handleContractChange = ({ file }) => {
+    if (file.status === 'done') {
+      const { response: { success, data } } = file;
+      if (success) {
+        this.setState({
+          agreementId: data.id,
+          agreementLink: data.link,
+          agreementName: file.name
+        })
+      } else {
+        this.setState({
+          agreementId: '',
+          agreementLink: '',
+          agreementName: '',
+        })
+        message.error('文件上传失败')
+      }
+    }
+    console.log('handleContractChange', file);
   }
 
   render() {
     const {
-      visible, loading, coverImageUrl, bannerFileList, detailFileList,
-      previewVisible, previewImage, previewTitle, activityRadio,
+      visible, loading, coverLink, bannerFileList, detailFileList,
+      previewVisible, previewImage, previewTitle, activityRadio, agreementLink,
+      agreementName,
     } = this.state;
     const { editData, classifyList, } = this.props;
     const uploadButton = (
@@ -190,7 +285,8 @@ class ProduceEditModal extends Component {
         <div style={{ marginTop: 8 }}>Upload</div>
       </div>
     );
-    console.log('fileList', bannerFileList)
+    console.log('coverLink', coverLink, agreementLink,)
+    console.log('fileList', bannerFileList, detailFileList)
     return (
       <Modal
         title={editData.id ? '编辑' : '新增' + '商品'}
@@ -233,19 +329,18 @@ class ProduceEditModal extends Component {
             ]}
           >
             <Upload
-              name="avatar"
+              name="file"
               listType="picture-card"
               className="avatar-uploader"
               showUploadList={false}
-              action="/v1/userInfo/updateUserInfoForFront"
+              action="/v1/upload/uploadFile"
               data={{
                 type: 1,
-                id: "",
               }}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
               onChange={this.handleCoverChange}
             >
-              {coverImageUrl ? <img src={coverImageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+              {coverLink ? <img src={coverLink} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
             </Upload>
           </Form.Item>
           <Form.Item label="轮播图" name="bannerList"
@@ -254,12 +349,15 @@ class ProduceEditModal extends Component {
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 2,
+              }}
               listType="picture-card"
               fileList={bannerFileList.filter(item => item.status === 'done' || item.status === 'uploading')}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
               onPreview={this.handlePreview}
-              onChange={this.handleChange}
+              onChange={this.handleBannerChange}
               itemRender={this.itemRender}
             // onRemove={() => this.onRemove(fileList)}
             >
@@ -294,7 +392,7 @@ class ProduceEditModal extends Component {
                           fieldKey={[field.fieldKey, 'price']}
                           rules={[{ required: true, message: '请输入' }]}
                         >
-                          <Input placeholder="请输入" />
+                          <InputNumber placeholder="请输入" precision={2} min={0} max={999999} />
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => {
                           if (fields.length === 1) {
@@ -315,17 +413,24 @@ class ProduceEditModal extends Component {
               }}
             </Form.List>
           </Form.Item>
-          <Form.Item label="合同" name="agreementName"
+          <Form.Item label="合同" name="agreementLink"
             rules={[
               { required: true, message: '请上传' }
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              onChange={this.handleChange}
-              beforeUpload={(file) => this.beforeUpload(file, 2, ['pdf'])}
+              name="file"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 4,
+              }}
+              showUploadList={false}
+              onChange={this.handleContractChange}
+              beforeUpload={(file) => this.beforeUpload(file, 2, ['application/pdf'])}
             >
-              <Button><UploadOutlined />点击上传</Button>
+              {
+                agreementLink ? <Button><UploadOutlined />{agreementName}</Button> : <Button><UploadOutlined />点击上传</Button>
+              }
             </Upload>
           </Form.Item>
           <Form.Item label="服务时间(月)" name="serviceTerm">
@@ -399,14 +504,20 @@ class ProduceEditModal extends Component {
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              name="file"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 3,
+              }}
+              fileList={detailFileList.filter(item => item.status === 'done' || item.status === 'uploading')}
               listType="picture-card"
               fileList={detailFileList}
               onPreview={this.handlePreview}
-              // onChange={this.handleChange}
+              itemRender={this.detailItemRender}
+              onChange={this.handleDetailChange}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
             >
-              {detailFileList.length >= 10 ? null : uploadButton}
+              {detailFileList.filter(item => item.status === 'done').length === 0 ? uploadButton : null}
             </Upload>
           </Form.Item>
         </Form>

@@ -245,6 +245,9 @@ class OrderManage extends Component {
           options={{
             fullScreen: false
           }}
+          scroll={{
+            x: 1920
+          }}
         />
         <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} flag={flag} />
       </PageContainer>
