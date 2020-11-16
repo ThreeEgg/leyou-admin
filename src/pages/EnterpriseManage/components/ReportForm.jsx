@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { Button, Space, } from 'antd'
+import { Button, Space, Upload, message, } from 'antd'
 import { getReportList } from '@/services/company'
 import PageBack from "@/components/PageBack"
 import { getStateByParams } from '@/utils/tools'
@@ -47,22 +47,127 @@ class ReportForm extends Component {
     {
       title: '资产负债表',
       dataIndex: 'balanceLink',
-      render: (url) => {
-        <Button type="link" onClick={() => this.downloadFile(url)}>下载</Button>
+      render: (url, item) => {
+        if (url && url !== '-') {
+          return (
+            <Space>
+              <Button type="link"><a href={url} download="资产负债表.pdf">下载</a></Button>
+              <Upload
+                name="file"
+                action="/v1/upload/uploadFile"
+                data={{
+                  type: 6,
+                  id: item.id
+                }}
+                showUploadList={false}
+                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                onChange={this.handleChange}
+              >
+                <Button type="link">更换</Button>
+              </Upload>
+            </Space>
+          )
+        } else {
+          return (
+            <Upload
+              name="file"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 6,
+                id: item.id
+              }}
+              showUploadList={false}
+              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              onChange={this.handleChange}
+            >
+              <Button type="link">上传</Button>
+            </Upload>
+          )
+        }
       }
     },
     {
       title: '利润表',
       dataIndex: 'profitLink',
-      render: (url) => {
-        <Button type="link" onClick={() => this.downloadFile(url)}>下载</Button>
+      render: (url, item) => {
+        if (url && url !== '-') {
+          return (
+            <Space>
+              <Button type="link"><a href={url} download="利润表.pdf">下载</a></Button>
+              <Upload
+                name="file"
+                action="/v1/upload/uploadFile"
+                data={{
+                  type: 7,
+                  id: item.id
+                }}
+                showUploadList={false}
+                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                onChange={this.handleChange}
+              >
+                <Button type="link">更换</Button>
+              </Upload>
+            </Space>
+          )
+        } else {
+          return (
+            <Upload
+              name="file"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 7,
+                id: item.id
+              }}
+              showUploadList={false}
+              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              onChange={this.handleChange}
+            >
+              <Button type="link">上传</Button>
+            </Upload>
+          )
+        }
       }
     },
     {
       title: '现金流量表',
       dataIndex: 'moneyLink',
-      render: (url) => {
-        <Button type="link" onClick={() => this.downloadFile(url)}>下载</Button>
+      render: (url, item) => {
+        if (url && url !== '-') {
+          return (
+            <Space>
+              <Button type="link"><a href={url} download="现金流量表.pdf">下载</a></Button>
+              <Upload
+                name="file"
+                action="/v1/upload/uploadFile"
+                data={{
+                  type: 8,
+                  id: item.id
+                }}
+                showUploadList={false}
+                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                onChange={this.handleChange}
+              >
+                <Button type="link">更换</Button>
+              </Upload>
+            </Space>
+          )
+        } else {
+          return (
+            <Upload
+              name="file"
+              action="/v1/upload/uploadFile"
+              data={{
+                type: 8,
+                id: item.id
+              }}
+              showUploadList={false}
+              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              onChange={this.handleChange}
+            >
+              <Button type="link">上传</Button>
+            </Upload>
+          )
+        }
       }
     },
     {
@@ -74,11 +179,47 @@ class ReportForm extends Component {
       render: (_, item) => (
         <Space>
           <Button type="link" size="small" onClick={() => this.handleUpdate(item)}>数据修改</Button>
-          <Button type="link" size="small" >上传报表</Button>
+          {/* <Button type="link" size="small" >上传报表</Button> */}
         </Space>
       ),
     },
   ]
+
+  handleChange = info => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      console.log('file', info.file)
+      const { response: { success } } = info.file;
+      if (success) {
+        message.success('上传成功');
+        this.reload();
+      } else {
+        message.error('上传失败');
+      }
+      return;
+    }
+    if (info.file.status === 'error') {
+      message.error('上传失败');
+    }
+  };
+
+  beforeUpload = (file, size, fileType) => {
+    console.log('file', file)
+    // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isJpgOrPng = !!fileType.find(item => item === file.type);
+    if (!isJpgOrPng) {
+      message.error('文件格式不符');
+    }
+    const isLt2M = file.size / 1024 / 1024 < size;
+    if (!isLt2M) {
+      message.error(`文件大小限制${size}M`);
+    }
+    return isJpgOrPng && isLt2M;
+  }
 
   handleUpdate = (editData) => {
     this.setState({

@@ -7,6 +7,7 @@ import { getOrderList, handleOrderStatus, } from '@/services/order'
 import { getFirstClassifyList } from "@/services/classify"
 import moment from "@/utils/moment"
 import EditModal from "./components/EditModal"
+import ActivityEdit from "./components/ActivityEdit"
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -21,6 +22,7 @@ class OrderManage extends Component {
 
   EditModalRef = createRef()
   actionRef = createRef()
+  ActivityEditRef = createRef()
 
   columns = [
     {
@@ -121,7 +123,7 @@ class OrderManage extends Component {
           }
           {
             item.orderStatus === 1 && item.typeName !== "实物类产品" && <>
-              <Button type="link" size="small" >商品活动</Button>
+              <Button type="link" size="small" onClick={() => this.handleActivity(item)}>商品活动</Button>
               <Button type="link" size="small" onClick={() => { this.handleModal(2, item) }}>服务时间设置</Button>
             </>
           }
@@ -139,6 +141,25 @@ class OrderManage extends Component {
 
   componentDidMount() {
     this.getFirstClassifyList()
+  }
+
+  handleActivity = (data) => {
+    console.log('data', data);
+    if (data.isActivity === 0) {
+      message.info("该订单商品不支持活动");
+      return;
+    }
+    if (data.isActivity === 1 && data.isCompleted === 1) {
+      message.info(`该商品已在${data.executionTimeStr}执行延长服务${data.extraTimeStr}天/返还${data.returnPoint}簿记豆活动`);
+      return
+    }
+    if (data.isActivity === 1 && data.isCompleted === 0) {
+      this.setState({
+        editData: data
+      }, () => {
+        this.ActivityEditRef.current.handleOk()
+      })
+    }
   }
 
   handleModal = (flag, editData) => {
@@ -250,6 +271,7 @@ class OrderManage extends Component {
           }}
         />
         <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} flag={flag} />
+        <ActivityEdit ref={this.ActivityEditRef} editData={editData} reload={this.reload}></ActivityEdit>
       </PageContainer>
     )
   }

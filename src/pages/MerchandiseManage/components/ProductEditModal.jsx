@@ -191,21 +191,49 @@ class ProduceEditModal extends Component {
   handleCancel = () => {
     this.setState({
       visible: false,
-    });
+      cover: '',
+      coverLink: "",
+      bannerFileList: [],
+      detailFileList: [],
+      previewVisible: false,
+      previewImage: '',
+      previewTitle: '',
+      activityRadio: 0,
+      agreementId: "",
+      agreementLink: "",
+      agreementName: '',
+    })
   };
 
   onFinish = paramsData => {
     const params = paramsData;
-    console.log('params', params);
+
     const { editData } = this.props;
     const { cover, coverLink, agreementId, agreementLink, bannerFileList, detailFileList, } = this.state;
     params.agreementId = agreementId;
     params.agreementLink = agreementLink;
     params.cover = cover;
     params.coverLink = coverLink;
-    params.bannerFileList = bannerFileList;
-    params.detailFileList = detailFileList;
-    this.addGood(params)
+    // params.bannerFileList = bannerFileList;
+    // params.detailFileList = detailFileList;
+    const bannerList = [];
+    bannerFileList.forEach(item => {
+      const { response: { data } } = item;
+      bannerList.push({
+        ...data
+      })
+    })
+    const detailList = []
+    detailFileList.forEach(item => {
+      const { response: { data } } = item;
+      detailList.push({
+        ...data
+      })
+    })
+    params.bannerList = bannerList;
+    params.detailList = detailList;
+    this.addGood(params);
+    console.log('params', params);
   }
 
   addGood = async params => {
@@ -426,7 +454,7 @@ class ProduceEditModal extends Component {
               }}
               showUploadList={false}
               onChange={this.handleContractChange}
-              beforeUpload={(file) => this.beforeUpload(file, 2, ['application/pdf'])}
+              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
             >
               {
                 agreementLink ? <Button><UploadOutlined />{agreementName}</Button> : <Button><UploadOutlined />点击上传</Button>

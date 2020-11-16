@@ -57,6 +57,8 @@ export default {
   updateServiceTime:'/order/updateServiceTermById', // 更新服务到期时间
   updateTotalPrice:'/order/updatePriceById', // 修改订单金额
 
+  updateActivity:'/order/updateActivityByOrderId', // 商品活动
+
   /**
    * 簿记豆流水
    */

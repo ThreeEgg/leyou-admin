@@ -28,3 +28,10 @@ export const updateTotalPrice = async (params) => {
   return request(`${api.updateTotalPrice}?${qs.stringify(params)}`);
 }
 
+export const updateActivity = async params =>{
+  return request.post(`${api.updateActivity}`,{
+    data:params
+  })
+}
+
+
