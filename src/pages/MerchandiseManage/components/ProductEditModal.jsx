@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import {
   Modal, Form, Input, Radio, Upload, Button, Space, message,
   InputNumber, Row, Col,
@@ -39,6 +39,8 @@ class ProduceEditModal extends Component {
     agreementLink: "",
     agreementName: '',
   }
+
+  productFormRef = createRef()
 
   componentDidMount() {
 
@@ -217,21 +219,31 @@ class ProduceEditModal extends Component {
     // params.bannerFileList = bannerFileList;
     // params.detailFileList = detailFileList;
     const bannerList = [];
+    const bannerImgIds = [];
     bannerFileList.forEach(item => {
       const { response: { data } } = item;
       bannerList.push({
         ...data
       })
+      bannerImgIds.push({
+        id: data.id,
+      })
     })
-    const detailList = []
+    const detailList = [];
+    const detailImgIds = [];
     detailFileList.forEach(item => {
       const { response: { data } } = item;
       detailList.push({
         ...data
       })
+      detailImgIds.push({
+        id: data.id,
+      })
     })
     params.bannerList = bannerList;
+    params.bannerImgIds = bannerImgIds.join(',');
     params.detailList = detailList;
+    params.detailImgIds = detailImgIds.join(',');
     this.addGood(params);
     console.log('params', params);
   }
@@ -330,7 +342,9 @@ class ProduceEditModal extends Component {
         destroyOnClose
         maskClosable={false}
       >
-        <Form name="productForm" onFinish={this.onFinish} labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} initialValues={editData}>
+        <Form name="productForm" onFinish={this.onFinish} labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} initialValues={editData}
+          ref={this.productFormRef}
+        >
           <Form.Item label="名称" name="goodsName"
             rules={[
               { required: true, message: '请输入' }
@@ -409,7 +423,19 @@ class ProduceEditModal extends Component {
                           {...field}
                           name={[field.name, 'detailName']}
                           fieldKey={[field.fieldKey, 'detailName']}
-                          rules={[{ required: true, message: '请输入' }]}
+                          rules={[
+                            { required: true, message: '请输入' },
+                            ({ getFieldValue }) => ({
+                              validator(rule, value, callback) {
+                                const goodsDetails = getFieldValue('goodsDetails');
+                                console.log('goodsDetails', goodsDetails, value)
+                                if (goodsDetails && goodsDetails.length > 0 && goodsDetails.filter(good => good.detailName === value).length > 1) {
+                                  return callback('已存在该名称的品类');
+                                }
+                                return Promise.resolve();
+                              },
+                            }),
+                          ]}
                         >
                           <Input placeholder="请输入" />
                         </Form.Item>

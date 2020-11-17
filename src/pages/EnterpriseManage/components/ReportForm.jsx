@@ -7,6 +7,7 @@ import PageBack from "@/components/PageBack"
 import { getStateByParams } from '@/utils/tools'
 import ReportEdit from "./ReportEdit"
 
+const fileTypeList = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
 class ReportForm extends Component {
 
   state = {
@@ -51,7 +52,7 @@ class ReportForm extends Component {
         if (url && url !== '-') {
           return (
             <Space>
-              <Button type="link"><a href={url} download="资产负债表.pdf">下载</a></Button>
+              <Button type="link"><a href={url} download="资产负债表">下载</a></Button>
               <Upload
                 name="file"
                 action="/v1/upload/uploadFile"
@@ -60,7 +61,7 @@ class ReportForm extends Component {
                   id: item.id
                 }}
                 showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
                 onChange={this.handleChange}
               >
                 <Button type="link">更换</Button>
@@ -77,7 +78,7 @@ class ReportForm extends Component {
                 id: item.id
               }}
               showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
               onChange={this.handleChange}
             >
               <Button type="link">上传</Button>
@@ -93,7 +94,7 @@ class ReportForm extends Component {
         if (url && url !== '-') {
           return (
             <Space>
-              <Button type="link"><a href={url} download="利润表.pdf">下载</a></Button>
+              <Button type="link"><a href={url} download="利润表">下载</a></Button>
               <Upload
                 name="file"
                 action="/v1/upload/uploadFile"
@@ -102,7 +103,7 @@ class ReportForm extends Component {
                   id: item.id
                 }}
                 showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
                 onChange={this.handleChange}
               >
                 <Button type="link">更换</Button>
@@ -119,7 +120,7 @@ class ReportForm extends Component {
                 id: item.id
               }}
               showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
               onChange={this.handleChange}
             >
               <Button type="link">上传</Button>
@@ -135,7 +136,7 @@ class ReportForm extends Component {
         if (url && url !== '-') {
           return (
             <Space>
-              <Button type="link"><a href={url} download="现金流量表.pdf">下载</a></Button>
+              <Button type="link"><a href={url} download="现金流量表">下载</a></Button>
               <Upload
                 name="file"
                 action="/v1/upload/uploadFile"
@@ -144,7 +145,7 @@ class ReportForm extends Component {
                   id: item.id
                 }}
                 showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
                 onChange={this.handleChange}
               >
                 <Button type="link">更换</Button>
@@ -161,7 +162,7 @@ class ReportForm extends Component {
                 id: item.id
               }}
               showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, ['application/pdf'])}
+              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
               onChange={this.handleChange}
             >
               <Button type="link">上传</Button>
