@@ -301,7 +301,7 @@ class ProductManage extends Component {
             },
           }}
         />
-        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} reload={this.reload} classifyList={classifyList} />
+        <ProduceEditModal ref={this.ProduceEditModalRef} editData={editData} reload={this.reload} classifyList={classifyList} isService={getStateByParams('isService')} />
         <CountEdit ref={this.CountEditRef} editData={countEditData} reload={this.reload}></CountEdit>
       </PageContainer>
     )

@@ -171,11 +171,13 @@ class MerchandiseManage extends Component {
   }
 
   gotoClassManage = (item) => {
+    console.log('item', item)
     history.push({
       pathname: `/merchandiseManage/productManage`,
       state: {
         type: item.id,
-        parentId: item.parentId
+        parentId: item.parentId,
+        isService: item.isService,
       }
     })
   }

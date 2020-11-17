@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import { LoadingOutlined, PlusOutlined, MinusCircleOutlined, UploadOutlined, } from '@ant-design/icons';
 import { addGood, updateGood, } from '@/services/merchandise'
-
+import { getStateByParams } from "@/utils/tools"
 import styles from "./ProduceEditModal.less"
 //1325402507109228546
 const { TextArea } = Input;
@@ -43,14 +43,34 @@ class ProduceEditModal extends Component {
   productFormRef = createRef()
 
   componentDidMount() {
-
+    console.log('isService', this.props.isService)
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.editData !== this.props.editData) {
       const { editData } = this.props;
+      (editData.bannerList || []).forEach((item, index) => {
+        item.uid = item.id;
+        item.status = 'done';
+        item.name = '轮播图';
+        item.url = item.link
+      });
+      (editData.detailList || []).forEach((item, index) => {
+        item.uid = item.id;
+        item.status = 'done';
+        item.name = '详情图片';
+        item.url = item.link
+      });
+      console.log('editData', editData)
       this.setState({
-        activityRadio: editData.isActivity
+        activityRadio: editData.isActivity,
+        coverLink: editData.coverLink,
+        cover: editData.cover,
+        bannerFileList: editData.bannerList || [],
+        detailFileList: editData.detailList || [],
+        agreementId: editData.agreementId,
+        agreementLink: editData.agreementLink,
+        agreementName: editData.agreementName,
       })
     }
   }
@@ -211,40 +231,77 @@ class ProduceEditModal extends Component {
     const params = paramsData;
 
     const { editData } = this.props;
-    const { cover, coverLink, agreementId, agreementLink, bannerFileList, detailFileList, } = this.state;
+    const { cover, coverLink, agreementId, agreementLink, agreementName, bannerFileList, detailFileList, } = this.state;
+    if (!coverLink) {
+      message.info('封面图必传');
+      return;
+    }
+    if (!agreementLink) {
+      message.info('合同必传');
+      return;
+    }
+    if ((bannerFileList || []).filter(item => item.status === 'done').length <= 0) {
+      message.info('轮播图必传');
+      return;
+    }
+
     params.agreementId = agreementId;
     params.agreementLink = agreementLink;
+    params.agreementName = agreementName;
     params.cover = cover;
     params.coverLink = coverLink;
-    // params.bannerFileList = bannerFileList;
-    // params.detailFileList = detailFileList;
     const bannerList = [];
     const bannerImgIds = [];
-    bannerFileList.forEach(item => {
-      const { response: { data } } = item;
-      bannerList.push({
-        ...data
-      })
-      bannerImgIds.push({
-        id: data.id,
-      })
-    })
+    (bannerFileList || []).forEach(item => {
+      if (item.status === 'done') {
+        if (item.uid + '' === item.id + '') {
+          bannerList.push({
+            id: item.id,
+            link: item.link,
+          })
+          bannerImgIds.push(item.id)
+        } else {
+          const { response: { data } } = item;
+          bannerList.push({
+            ...data
+          })
+          bannerImgIds.push(data.id)
+        }
+      }
+    });
     const detailList = [];
     const detailImgIds = [];
-    detailFileList.forEach(item => {
-      const { response: { data } } = item;
-      detailList.push({
-        ...data
-      })
-      detailImgIds.push({
-        id: data.id,
-      })
-    })
+    (detailFileList || []).forEach(item => {
+      if (item.status === 'done') {
+        if (item.uid + '' === item.id + '') {
+          detailList.push({
+            id: item.id,
+            link: item.link,
+          })
+          detailImgIds.push(item.id)
+        } else {
+          const { response: { data } } = item;
+          detailList.push({
+            ...data
+          })
+          detailImgIds.push(data.id)
+        }
+      }
+    });
+    console.log('bannerImgIds', bannerImgIds, detailImgIds, detailFileList)
     params.bannerList = bannerList;
     params.bannerImgIds = bannerImgIds.join(',');
     params.detailList = detailList;
     params.detailImgIds = detailImgIds.join(',');
-    this.addGood(params);
+
+    params.isService = getStateByParams('isService') || 0;
+    if (editData.id) {
+      params.id = editData.id;
+      this.updateGood(params)
+    } else {
+      this.addGood(params);
+    }
+
     console.log('params', params);
   }
 
