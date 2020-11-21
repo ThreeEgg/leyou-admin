@@ -2,8 +2,8 @@ import request from '@/utils/request';
 import qs from 'qs';
 import api from './api';
 
-export const getList = async (params) => {
-  return request(`${api.list}?${qs.stringify(params)}`);
+export const getCreatorList = async (params) => {
+  return request(`${api.creatorList}`);
 }
 
 export const fileUpload = async (params) => {
@@ -18,3 +18,28 @@ export const fileUpload = async (params) => {
     data: form,
   });
 }
+
+export const handleH5Status = async (params) => {
+  return request(`${api.handleH5Status}?${qs.stringify(params)}`);
+}
+
+export const deleteLink = async (params) => {
+  return request(`${api.deleteLink}?${qs.stringify(params)}`);
+}
+
+export const addLink = async params => {
+  return request.post(`${api.addLink}`, {
+    data: params
+  })
+}
+
+export const updateLink = async params => {
+  return request.post(`${api.updateLink}`, {
+    data: params
+  })
+}
+
+export const getLinkDetail = async (params) => {
+  return request(`${api.getLinkDetail}?${qs.stringify(params)}`);
+}
+

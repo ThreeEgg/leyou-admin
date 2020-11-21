@@ -1,11 +1,11 @@
 import React, { Component, createRef } from 'react'
-import { Modal, Form, Input, } from 'antd';
+import { Modal, Form, Input, message, } from 'antd';
 import { UploadOutlined } from '@ant-design/icons'
 import 'braft-editor/dist/index.css'
 import 'braft-editor/dist/output.css'
 import BraftEditor from 'braft-editor'
 import classnames from 'classnames'
-import { fileUpload } from '@/services/creator'
+import { fileUpload, addLink, updateLink, } from '@/services/creator'
 
 import PreviewContent from './PreviewContent'
 import styles from "./EditModal.less"
@@ -14,7 +14,7 @@ class EditModal extends Component {
 
   state = {
     visible: false,
-    editorValue: BraftEditor.createEditorState(null),
+    editorValue: BraftEditor.createEditorState(""),
 
   }
 
@@ -58,15 +58,21 @@ class EditModal extends Component {
     'clear'
   ]
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.editData !== this.props.editData) {
+      this.setState({
+        editorValue: BraftEditor.createEditorState(unescape(unescape(this.props.editData.content || ''))),
+      })
+
+
+    }
+  }
+
   renderModal = () => {
     console.log('点击')
     return (
       <div>222</div>
     )
-  }
-
-  uploadFn = (a, b, c, d) => {
-    console.log(a, b, c, d)
   }
 
   handleOk = () => {
@@ -81,11 +87,41 @@ class EditModal extends Component {
     });
   };
 
-  onFinish = params => {
+  onFinish = paramsData => {
+    const params = paramsData;
     if (params.content.toHTML) {
       params.content = params.content.toHTML();
     }
+    const { editData } = this.props;
+    if (editData.id) {
+      params.id = editData.id;
+      this.updateLink(params)
+    } else {
+      this.addLink(params)
+    }
     console.log('params', params)
+  }
+
+  addLink = async params => {
+    const { success, msg } = await addLink(params);
+    if (success) {
+      message.success('新增成功');
+      this.handleCancel();
+      this.props.reload();
+    } else {
+      message.error(msg)
+    }
+  }
+
+  updateLink = async params => {
+    const { success, msg } = await updateLink(params);
+    if (success) {
+      message.success('修改成功');
+      this.handleCancel();
+      this.props.reload();
+    } else {
+      message.error(msg)
+    }
   }
 
   handleChange = (editorValue) => {
@@ -140,7 +176,8 @@ class EditModal extends Component {
   render() {
     const { extendControls, controls, } = this;
     const { visible, editorValue, showContent, } = this.state;
-    console.log('editorValue', editorValue)
+    const { editData } = this.props;
+    console.log('editorValue', editorValue, editorValue.getCurrentContent());
     return (
       <Modal
         title="新增"
@@ -157,6 +194,7 @@ class EditModal extends Component {
         <Form name="creatorForm" onFinish={this.onFinish}
           labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}
           ref={this.creatorFormRef}
+          initialValues={editData}
         >
           <Form.Item label="名称" name="name"
             rules={[
@@ -170,8 +208,8 @@ class EditModal extends Component {
               { required: true, message: '请输入内容' }
             ]}
           >
-            <BraftEditor value={editorValue}
-              onChange={this.handleChange}
+            <BraftEditor defaultValue={editorValue}
+              // onChange={this.handleChange}
               extendControls={extendControls}
               controls={controls}
               media={{

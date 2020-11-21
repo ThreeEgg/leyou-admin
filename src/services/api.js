@@ -70,4 +70,14 @@ export default {
    * 上传
    */
   fileUpload: '/upload/uploadFile', // 上传
+
+  /**
+   * H5生成器
+   */
+  creatorList: '/linkInfo/findLinkInfoList', // H5生成器列表
+  handleH5Status: '/linkInfo/updateIsUsedById', // 修改状态
+  deleteLink: '/linkInfo/deleteLinkInfo', // 删除一条
+  addLink: '/linkInfo/saveLinkInfo', // 删除一条
+  updateLink: '/linkInfo/updateLinkInfo', //  更新
+  getLinkDetail: '/linkInfo/findLinkInfoDetail', //  get详情
 }

@@ -8,6 +8,11 @@ export default [
         path: '/user/login',
         component: './user/login',
       },
+      {
+        name: '展示',
+        path: '/user/show',
+        component: './Creator/components/Show',
+      }
     ],
   },
   {
@@ -57,7 +62,7 @@ export default [
             name: '商品管理',
             icon: 'table',
             // component: './MerchandiseManage',
-            routes:[
+            routes: [
               {
                 path: '/merchandiseManage',
                 name: '分类管理',
@@ -67,7 +72,7 @@ export default [
               {
                 path: '/merchandiseManage/productManage',
                 name: '商品管理',
-                hideInMenu:true,
+                hideInMenu: true,
                 icon: 'table',
                 component: './MerchandiseManage/components/ProductManage',
               },
@@ -84,7 +89,7 @@ export default [
             name: '企业管理',
             icon: 'table',
             // component: './EnterpriseManage',
-            routes:[
+            routes: [
               {
                 path: '/enterpriseManage',
                 name: '企业管理',
@@ -94,11 +99,11 @@ export default [
               {
                 path: '/enterpriseManage/reportForm',
                 name: '全部报表',
-                hideInMenu:true,
+                hideInMenu: true,
                 icon: 'table',
                 component: './EnterpriseManage/components/ReportForm',
               }
-              
+
             ]
           },
           {
@@ -106,7 +111,7 @@ export default [
             name: '客户管理',
             icon: 'table',
             // component: './ClientManage',
-            routes:[
+            routes: [
               {
                 path: '/clientManage',
                 name: '客户管理',
@@ -116,14 +121,14 @@ export default [
               {
                 path: '/clientManage/contract',
                 name: '查看合同',
-                hideInMenu:true,
+                hideInMenu: true,
                 icon: 'table',
                 component: './ClientManage/components/Contract',
               },
               {
-                path:'/clientManage/FundChange',
-                name:'簿记豆变更',
-                hideInMenu:true,
+                path: '/clientManage/FundChange',
+                name: '簿记豆变更',
+                hideInMenu: true,
                 component: './ClientManage/components/FundChange'
               }
             ]
