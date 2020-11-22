@@ -369,6 +369,12 @@ class ProduceEditModal extends Component {
     console.log('handleContractChange', file);
   }
 
+  onRemove = file => {
+    console.log('file', file);
+
+    return true;
+  }
+
   render() {
     const {
       visible, loading, coverLink, bannerFileList, detailFileList,
@@ -458,7 +464,7 @@ class ProduceEditModal extends Component {
               onPreview={this.handlePreview}
               onChange={this.handleBannerChange}
               itemRender={this.itemRender}
-            // onRemove={() => this.onRemove(fileList)}
+              onRemove={(file) => this.onRemove(file)}
             >
               {bannerFileList.filter(item => item.status === 'done').length === 0 ? uploadButton : null}
             </Upload>
@@ -627,6 +633,7 @@ class ProduceEditModal extends Component {
               itemRender={this.detailItemRender}
               onChange={this.handleDetailChange}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
+              onRemove={(file) => this.onRemove(file)}
             >
               {detailFileList.filter(item => item.status === 'done').length === 0 ? uploadButton : null}
             </Upload>

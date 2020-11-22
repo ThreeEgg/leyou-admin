@@ -19,30 +19,28 @@ class EditModal extends Component {
   }
 
   creatorFormRef = createRef()
-
+  PreviewContentRef = createRef()
 
   extendControls = [
     'separator',
     {
-      key: 'my-modal',
-      type: 'modal',
+      key: 'my-button',
+      type: 'button',
       title: '预览', // 指定鼠标悬停提示文案
       className: 'my-modal', // 指定触发按钮的样式名
       html: null, // 指定在按钮中渲染的html字符串
       text: '预览', // 指定按钮文字，此处可传入jsx，若已指定html，则text不会显示
       onClick: () => {
-      }, // 指定触发按钮点击后的回调函数
-      modal: {
-        id: 'preview-modal', // 必选属性，传入一个唯一字符串即可
-        title: '预览', // 指定弹窗组件的顶部标题
-        className: 'preview-modal', // 指定弹窗组件样式名
-        width: 375, // 指定弹窗组件的宽度
-        height: 667, // 指定弹窗组件的高度
-        showFooter: false, // 指定是否显示弹窗组件底栏
-        showClose: true, // 指定是否显示右上角关闭按钮
-        closeOnBlur: true, // 指定是否在点击蒙层后关闭弹窗(v2.1.24)
-        children: <PreviewContent isShow={true} />, // 指定弹窗组件的内容组件
-      }
+        let content = this.creatorFormRef.current.getFieldValue('content');
+        if (content.toHTML) {
+          content = params.content.toHTML();
+        }
+        this.setState({
+          showContent: content,
+        }, () => {
+          this.PreviewContentRef.current.handleOk();
+        })
+      },
     }
   ]
 
@@ -50,29 +48,24 @@ class EditModal extends Component {
     'undo', 'redo', 'separator',
     'font-size', 'line-height', 'letter-spacing', 'separator',
     'text-color', 'bold', 'italic', 'underline', 'strike-through', 'separator',
-    'superscript', 'subscript', 'remove-styles', 'emoji', 'separator', 'text-indent', 'text-align', 'separator',
-    'headings', 'list-ul', 'list-ol', 'blockquote', 'code', 'separator',
+    'emoji', 'separator', 'text-indent', 'text-align', 'separator',
+    'list-ul', 'list-ol', 'separator',
     'link', 'separator', 'hr', 'separator',
     'media',
     'separator',
     'clear'
-  ]
+  ] //'superscript', 'subscript', 'remove-styles', 'headings', 'blockquote','code',
 
   componentDidUpdate(prevProps) {
     if (prevProps.editData !== this.props.editData) {
       this.setState({
         editorValue: BraftEditor.createEditorState(unescape(unescape(this.props.editData.content || ''))),
       })
-
-
     }
   }
 
   renderModal = () => {
     console.log('点击')
-    return (
-      <div>222</div>
-    )
   }
 
   handleOk = () => {
@@ -99,7 +92,6 @@ class EditModal extends Component {
     } else {
       this.addLink(params)
     }
-    console.log('params', params)
   }
 
   addLink = async params => {
@@ -177,7 +169,6 @@ class EditModal extends Component {
     const { extendControls, controls, } = this;
     const { visible, editorValue, showContent, } = this.state;
     const { editData } = this.props;
-    console.log('editorValue', editorValue, editorValue.getCurrentContent());
     return (
       <Modal
         title="新增"
@@ -190,6 +181,7 @@ class EditModal extends Component {
         }}
         destroyOnClose
         maskClosable={false}
+        className={styles.creatorModal}
       >
         <Form name="creatorForm" onFinish={this.onFinish}
           labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}
@@ -225,7 +217,7 @@ class EditModal extends Component {
             />
           </Form.Item>
         </Form>
-        <PreviewContent isShow={false} showContent={showContent}></PreviewContent>
+        <PreviewContent ref={this.PreviewContentRef} showContent={showContent}></PreviewContent>
       </Modal>
     )
   }

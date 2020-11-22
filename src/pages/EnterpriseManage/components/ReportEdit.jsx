@@ -57,14 +57,14 @@ class ReportEdit extends Component {
         destroyOnClose
       >
         <Form name="reportForm" onFinish={this.onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} initialValues={editData}>
-          <Form.Item label="营业收入" name="businessIncome"
+          <Form.Item label="营业收入" name="businessIncomeYear"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
             <InputNumber placeholder="请输入" precision={2} min={0} max={9999999999} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item label="净利润" name="netProfit"
+          <Form.Item label="净利润" name="netProfitYear"
             rules={[
               { required: true, message: '请输入' }
             ]}

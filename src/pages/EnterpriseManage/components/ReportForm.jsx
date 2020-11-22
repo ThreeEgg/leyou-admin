@@ -31,11 +31,11 @@ class ReportForm extends Component {
     },
     {
       title: '营业收入',
-      dataIndex: 'businessIncome',
+      dataIndex: 'businessIncomeYear',
     },
     {
       title: '净利润',
-      dataIndex: 'netProfit',
+      dataIndex: 'netProfitYear',
     },
     {
       title: '总资产',

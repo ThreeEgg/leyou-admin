@@ -63,12 +63,12 @@ class ClientManage extends Component {
     },
     {
       title: '簿记豆',
-      dataIndex: '3',
+      dataIndex: 'totalPoint',
       search: false,
     },
     {
       title: '最后登录时间',
-      dataIndex: '3',
+      dataIndex: 'lastLoginTime',
       search: false,
     },
     {
