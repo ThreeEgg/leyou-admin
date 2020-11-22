@@ -256,7 +256,7 @@ class ProduceEditModal extends Component {
       if (item.status === 'done') {
         if (item.uid + '' === item.id + '') {
           bannerList.push({
-            id: item.id,
+            id: item.id + '',
             link: item.link,
           })
           bannerImgIds.push(item.id)
@@ -275,7 +275,7 @@ class ProduceEditModal extends Component {
       if (item.status === 'done') {
         if (item.uid + '' === item.id + '') {
           detailList.push({
-            id: item.id,
+            id: item.id + '',
             link: item.link,
           })
           detailImgIds.push(item.id)
@@ -289,8 +289,14 @@ class ProduceEditModal extends Component {
       }
     });
     console.log('bannerImgIds', bannerImgIds, detailImgIds, detailFileList)
+    bannerList.forEach((item, index) => {
+      item.sort = index
+    })
     params.bannerList = bannerList;
     params.bannerImgIds = bannerImgIds.join(',');
+    detailList.forEach((item, index) => {
+      item.sort = index
+    })
     params.detailList = detailList;
     params.detailImgIds = detailImgIds.join(',');
 
