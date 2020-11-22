@@ -6,8 +6,9 @@ import { getReportList } from '@/services/company'
 import PageBack from "@/components/PageBack"
 import { getStateByParams } from '@/utils/tools'
 import ReportEdit from "./ReportEdit"
+import ReportModal from './ReportModal'
 
-const fileTypeList = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+
 class ReportForm extends Component {
 
   state = {
@@ -17,6 +18,7 @@ class ReportForm extends Component {
 
   actionRef = createRef()
   ReportEditRef = createRef()
+  ReportModalRef = createRef()
 
   columns = [
     {
@@ -30,12 +32,20 @@ class ReportForm extends Component {
       dataIndex: 'showTimeStr',
     },
     {
-      title: '营业收入',
+      title: '营业收入(年)',
       dataIndex: 'businessIncomeYear',
     },
     {
-      title: '净利润',
+      title: '净利润(年)',
       dataIndex: 'netProfitYear',
+    },
+    {
+      title: '营业收入(月)',
+      dataIndex: 'businessIncomeMouth',
+    },
+    {
+      title: '净利润(月)',
+      dataIndex: 'netProfitMouth',
     },
     {
       title: '总资产',
@@ -53,37 +63,10 @@ class ReportForm extends Component {
           return (
             <Space>
               <Button type="link"><a href={url} download="资产负债表">下载</a></Button>
-              <Upload
-                name="file"
-                action="/v1/upload/uploadFile"
-                data={{
-                  type: 6,
-                  id: item.id
-                }}
-                showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-                onChange={this.handleChange}
-              >
-                <Button type="link">更换</Button>
-              </Upload>
             </Space>
           )
         } else {
-          return (
-            <Upload
-              name="file"
-              action="/v1/upload/uploadFile"
-              data={{
-                type: 6,
-                id: item.id
-              }}
-              showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-              onChange={this.handleChange}
-            >
-              <Button type="link">上传</Button>
-            </Upload>
-          )
+          return '-';
         }
       }
     },
@@ -95,37 +78,10 @@ class ReportForm extends Component {
           return (
             <Space>
               <Button type="link"><a href={url} download="利润表">下载</a></Button>
-              <Upload
-                name="file"
-                action="/v1/upload/uploadFile"
-                data={{
-                  type: 7,
-                  id: item.id
-                }}
-                showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-                onChange={this.handleChange}
-              >
-                <Button type="link">更换</Button>
-              </Upload>
             </Space>
           )
         } else {
-          return (
-            <Upload
-              name="file"
-              action="/v1/upload/uploadFile"
-              data={{
-                type: 7,
-                id: item.id
-              }}
-              showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-              onChange={this.handleChange}
-            >
-              <Button type="link">上传</Button>
-            </Upload>
-          )
+          return '-';
         }
       }
     },
@@ -137,37 +93,10 @@ class ReportForm extends Component {
           return (
             <Space>
               <Button type="link"><a href={url} download="现金流量表">下载</a></Button>
-              <Upload
-                name="file"
-                action="/v1/upload/uploadFile"
-                data={{
-                  type: 8,
-                  id: item.id
-                }}
-                showUploadList={false}
-                beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-                onChange={this.handleChange}
-              >
-                <Button type="link">更换</Button>
-              </Upload>
             </Space>
           )
         } else {
-          return (
-            <Upload
-              name="file"
-              action="/v1/upload/uploadFile"
-              data={{
-                type: 8,
-                id: item.id
-              }}
-              showUploadList={false}
-              beforeUpload={(file) => this.beforeUpload(file, 4, fileTypeList)}
-              onChange={this.handleChange}
-            >
-              <Button type="link">上传</Button>
-            </Upload>
-          )
+          return '-';
         }
       }
     },
@@ -180,7 +109,7 @@ class ReportForm extends Component {
       render: (_, item) => (
         <Space>
           <Button type="link" size="small" onClick={() => this.handleUpdate(item)}>数据修改</Button>
-          {/* <Button type="link" size="small" >上传报表</Button> */}
+          <Button type="link" size="small" onClick={() => this.uploadReport(item)}>上传报表</Button>
         </Space>
       ),
     },
@@ -208,25 +137,21 @@ class ReportForm extends Component {
     }
   };
 
-  beforeUpload = (file, size, fileType) => {
-    console.log('file', file)
-    // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    const isJpgOrPng = !!fileType.find(item => item === file.type);
-    if (!isJpgOrPng) {
-      message.error('文件格式不符');
-    }
-    const isLt2M = file.size / 1024 / 1024 < size;
-    if (!isLt2M) {
-      message.error(`文件大小限制${size}M`);
-    }
-    return isJpgOrPng && isLt2M;
-  }
+
 
   handleUpdate = (editData) => {
     this.setState({
       editData
     }, () => {
       this.ReportEditRef.current.handleOk()
+    })
+  }
+
+  uploadReport = (editData) => {
+    this.setState({
+      editData
+    }, () => {
+      this.ReportModalRef.current.handleOk()
     })
   }
 
@@ -288,6 +213,7 @@ class ReportForm extends Component {
           }}
         />
         <ReportEdit ref={this.ReportEditRef} editData={editData} reload={this.reload}></ReportEdit>
+        <ReportModal ref={this.ReportModalRef} reportId={editData.id} reload={this.reload}></ReportModal>
       </PageContainer>
     )
   }

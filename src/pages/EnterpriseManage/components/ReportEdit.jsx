@@ -57,33 +57,47 @@ class ReportEdit extends Component {
         destroyOnClose
       >
         <Form name="reportForm" onFinish={this.onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} initialValues={editData}>
-          <Form.Item label="营业收入" name="businessIncomeYear"
+          <Form.Item label="营业收入(年)" name="businessIncomeYear"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
-            <InputNumber placeholder="请输入" precision={2} min={0} max={9999999999} style={{ width: '100%' }} />
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item label="净利润" name="netProfitYear"
+          <Form.Item label="净利润(年)" name="netProfitYear"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
-            <InputNumber placeholder="请输入" precision={2} min={0} max={9999999999} style={{ width: '100%' }} />
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item label="营业收入(月)" name="businessIncomeMouth"
+            rules={[
+              { required: true, message: '请输入' }
+            ]}
+          >
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item label="净利润(月)" name="netProfitMouth"
+            rules={[
+              { required: true, message: '请输入' }
+            ]}
+          >
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item label="总资产" name="totalAssets"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
-            <InputNumber placeholder="请输入" precision={2} min={0} max={9999999999} style={{ width: '100%' }} />
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item label="净资产" name="netAssets"
             rules={[
               { required: true, message: '请输入' }
             ]}
           >
-            <InputNumber placeholder="请输入" precision={2} min={0} max={9999999999} style={{ width: '100%' }} />
+            <InputNumber placeholder="请输入" precision={2} min={-9999999999} max={9999999999} style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>
