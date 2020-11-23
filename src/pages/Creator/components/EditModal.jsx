@@ -33,7 +33,7 @@ class EditModal extends Component {
       onClick: () => {
         let content = this.creatorFormRef.current.getFieldValue('content');
         if (content.toHTML) {
-          content = params.content.toHTML();
+          content = content.toHTML();
         }
         this.setState({
           showContent: content,

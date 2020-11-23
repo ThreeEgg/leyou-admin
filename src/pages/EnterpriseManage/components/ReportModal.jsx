@@ -37,16 +37,23 @@ class ReportModal extends Component {
   }
 
   handleChange = ({ file }) => {
+    if (!this.hide) {
+      this.hide = message.loading('上传中', 0)
+    }
+
     if (file.status === 'done') {
       const { response: { success, } } = file;
       if (success) {
+        this.hide();
         message.success('文件上传成功')
+        this.props.reload()
       } else {
-
+        this.hide();
         message.error('文件上传失败')
       }
     }
     if (file.status === 'error') {
+      this.hide();
       message.error('文件上传失败')
     }
     console.log('file', file);
@@ -73,6 +80,7 @@ class ReportModal extends Component {
           <Form.Item label="报表" name="file">
             <Upload
               name="file"
+              accept=".xls,.xlsx"
               action="/v1/upload/uploadExcel"
               data={{
                 type: radioType,

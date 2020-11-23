@@ -21,6 +21,7 @@ class Show extends Component {
     }
     const { data, success, msg } = await getLinkDetail(params);
     if (success) {
+      document.title = data.name;
       this.setState({
         content: data.content,
       })
