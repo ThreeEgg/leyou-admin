@@ -3,11 +3,19 @@ import {
   Modal, Form, Input, Radio, Upload, Button, Space, message,
   InputNumber, Row, Col,
 } from 'antd';
-import { LoadingOutlined, PlusOutlined, MinusCircleOutlined, UploadOutlined, } from '@ant-design/icons';
+import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+
+import { LoadingOutlined, PlusOutlined, MinusCircleOutlined, UploadOutlined, EyeOutlined, DeleteOutlined, } from '@ant-design/icons';
 import { addGood, updateGood, } from '@/services/merchandise'
 import { getStateByParams } from "@/utils/tools"
 import styles from "./ProduceEditModal.less"
 //1325402507109228546
+
+import arrayMove from 'array-move';
+const SortableContainer = sortableContainer((props) => <ul style={{ width: "100%", display: 'flex', 'flexWrap': 'wrap' }} {...props}>{props.children}</ul>);
+const SortableItem = sortableElement((props) => <span style={{ width: 104, height: 104, margin: '0 5px 5px 0', pointerEvents: 'bounding-box' }} {...props}>{props.children}</span>);
+//拖拽end
+
 const { TextArea } = Input;
 class ProduceEditModal extends Component {
 
@@ -87,22 +95,16 @@ class ProduceEditModal extends Component {
 
   handleModalCancel = () => this.setState({ previewVisible: false });
 
-  handlePreview = async file => {
-    if (!file.url && !file.preview) {
-      file.preview = await this.getBase64(file.originFileObj);
-    }
-
-    this.setState({
-      previewImage: file.url || file.preview,
-      previewVisible: true,
-      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
-    });
-  };
-
   handleBannerChange = ({ file, fileList }) => {
 
-    if (file.status === 'done' || file.status === 'removed') {
-      this.setState({ bannerFileList: fileList })
+    if (file.status === 'done') {
+      this.setState((prevState) => ({
+        bannerFileList: prevState.bannerFileList.concat(fileList)
+      }), () => {
+        this.productFormRef.current.setFieldsValue({
+          bannerList: this.state.bannerFileList
+        })
+      })
     }
     console.log('handleBannerChange', file, fileList)
   };
@@ -110,57 +112,16 @@ class ProduceEditModal extends Component {
   handleDetailChange = ({ file, fileList }) => {
 
     if (file.status === 'done' || file.status === 'removed') {
-      this.setState({ detailFileList: fileList })
+      this.setState((prevState) => ({
+        detailFileList: prevState.detailFileList.concat(fileList)
+      }), () => {
+        this.productFormRef.current.setFieldsValue({
+          detailList: this.state.detailFileList
+        })
+      })
     }
     console.log('handleDetailChange', file, fileList)
   };
-
-  itemRender = (defaultRender, item) => {
-    return (
-
-      <div className={styles.uploader} key={item.uid}>
-        {defaultRender}
-        <Upload
-          name="file"
-          action="/v1/upload/uploadFile"
-          data={{
-            type: 2,
-          }}
-          onChange={(info) => this.handleItemChange(info, item.uid)}
-          beforeUpload={this.beforeItemUpload}
-        >
-          <PlusOutlined style={{ fontSize: 18 }} />
-        </Upload>
-      </div>
-    )
-  }
-
-  detailItemRender = (defaultRender, item) => {
-    return (
-
-      <div className={styles.uploader} key={item.uid}>
-        {defaultRender}
-        <Upload
-          name="file"
-          action="/v1/upload/uploadFile"
-          data={{
-            type: 3,
-          }}
-          onChange={(info) => this.handleDetailItemChange(info, item.uid)}
-          beforeUpload={this.beforeItemUpload}
-        >
-          <PlusOutlined style={{ fontSize: 18 }} />
-        </Upload>
-      </div>
-    )
-  }
-
-  beforeItemUpload = (file, fileList) => {
-    if (fileList.filter(item => item.status === 'done').length === 1) {
-      message.info('最多上传10张')
-
-    }
-  }
 
   beforeUpload = (file, size, fileType) => {
     console.log('file', file)
@@ -176,33 +137,6 @@ class ProduceEditModal extends Component {
     return isJpgOrPng && isLt2M;
   }
 
-  handleItemChange = (info, uid) => {
-    console.log('handleItemChange', info, uid)
-    if (info.file.status === 'done') {
-      const { bannerFileList } = this.state;
-      bannerFileList.splice(bannerFileList.findIndex(file => file.uid === uid) + 1, 0, info.file);
-      this.setState({ bannerFileList })
-    }
-
-  }
-
-  handleDetailItemChange = (info, uid) => {
-    console.log('handleItemChange', info, uid)
-    if (info.file.status === 'done') {
-      const { detailFileList } = this.state;
-      detailFileList.splice(detailFileList.findIndex(file => file.uid === uid) + 1, 0, info.file);
-      this.setState({ detailFileList })
-    }
-
-  }
-
-  onRemove = (fileList) => {
-    /* if (fileList.filter(item => item.status === 'done').length === 1) {
-      message.info('最后一个禁止删除')
-      return false;
-    } */
-    return true;
-  }
 
   handleOk = () => {
     this.setState({
@@ -375,10 +309,46 @@ class ProduceEditModal extends Component {
     console.log('handleContractChange', file);
   }
 
-  onRemove = file => {
-    console.log('file', file);
+  onBannerSortEnd = ({ oldIndex, newIndex }) => {
+    console.log('index', oldIndex, newIndex)
+    this.setState(({ bannerFileList }) => ({
+      bannerFileList: arrayMove(bannerFileList, oldIndex, newIndex),
+    }));
+  };
 
-    return true;
+  onDetailSortEnd = ({ oldIndex, newIndex }) => {
+    console.log('index', oldIndex, newIndex)
+    this.setState(({ detailFileList }) => ({
+      detailFileList: arrayMove(detailFileList, oldIndex, newIndex),
+    }));
+  };
+
+
+  previewImage = async (file) => {
+    console.log('previewImage-file: ', file);
+    if (!file.url && !file.preview) {
+      file.preview = await this.getBase64(file.originFileObj);
+    }
+
+    this.setState({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    });
+  }
+
+  deleteBannerImage = (file) => {
+    console.log('deleteBannerImage-file: ', file);
+    this.setState((prevState) => ({
+      bannerFileList: prevState.bannerFileList.filter(fileDemo => fileDemo.uid !== file.uid)
+    }))
+  }
+
+  deleteDetailImage = (file) => {
+    console.log('deleteDetailImage-file: ', file);
+    this.setState((prevState) => ({
+      detailFileList: prevState.detailFileList.filter(fileDemo => fileDemo.uid !== file.uid)
+    }))
   }
 
   render() {
@@ -459,20 +429,32 @@ class ProduceEditModal extends Component {
               { required: true, message: '请上传' }
             ]}
           >
+            <SortableContainer onSortEnd={this.onBannerSortEnd} axis="xy" helperClass="sortItem">
+              {
+                bannerFileList.map((file, index) => (
+                  <SortableItem key={file.uid} index={index}>
+                    <div className={styles.uploaderItem}>
+                      <img src={file.url || file.preview || file.response.data.link} alt="" />
+                      <div className={styles.handle}>
+                        <div><EyeOutlined onClick={() => this.previewImage(file)} /> <DeleteOutlined onClick={() => this.deleteBannerImage(file)} /></div>
+                      </div>
+                    </div>
+                  </SortableItem>
+                ))
+              }
+            </SortableContainer>
             <Upload
               action="/v1/upload/uploadFile"
               data={{
                 type: 2,
               }}
               listType="picture-card"
-              fileList={bannerFileList.filter(item => item.status === 'done' || item.status === 'uploading')}
+              fileList={[]}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
-              onPreview={this.handlePreview}
               onChange={this.handleBannerChange}
-              itemRender={this.itemRender}
-              onRemove={(file) => this.onRemove(file)}
+            // itemRender={this.itemRender}
             >
-              {bannerFileList.filter(item => item.status === 'done').length === 0 ? uploadButton : null}
+              {bannerFileList.length >= 10 ? null : uploadButton}
             </Upload>
           </Form.Item>
           <Form.Item label="商品品类" >
@@ -626,22 +608,32 @@ class ProduceEditModal extends Component {
               { required: true, message: '请上传' }
             ]}
           >
+            <SortableContainer onSortEnd={this.onDetailSortEnd} axis="xy" helperClass="sortItem">
+              {
+                detailFileList.map((file, index) => (
+                  <SortableItem key={file.uid} index={index}>
+                    <div className={styles.uploaderItem}>
+                      <img src={file.url || file.preview || file.response.data.link} alt="" />
+                      <div className={styles.handle}>
+                        <div><EyeOutlined onClick={() => this.previewImage(file)} /> <DeleteOutlined onClick={() => this.deleteDetailImage(file)} /></div>
+                      </div>
+                    </div>
+                  </SortableItem>
+                ))
+              }
+            </SortableContainer>
             <Upload
               name="file"
               action="/v1/upload/uploadFile"
               data={{
                 type: 3,
               }}
-              fileList={detailFileList.filter(item => item.status === 'done' || item.status === 'uploading')}
+              fileList={[]}
               listType="picture-card"
-              fileList={detailFileList}
-              onPreview={this.handlePreview}
-              itemRender={this.detailItemRender}
               onChange={this.handleDetailChange}
               beforeUpload={(file) => this.beforeUpload(file, 2, ['image/jpeg', 'image/png'])}
-              onRemove={(file) => this.onRemove(file)}
             >
-              {detailFileList.filter(item => item.status === 'done').length === 0 ? uploadButton : null}
+              {detailFileList.length >= 10 ? null : uploadButton}
             </Upload>
           </Form.Item>
         </Form>
