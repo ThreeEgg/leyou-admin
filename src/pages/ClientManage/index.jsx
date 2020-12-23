@@ -90,6 +90,8 @@ class ClientManage extends Component {
   handleEdit = (flag, editData) => {
     if (editData.companyIds) {
       editData.companyIds = editData.companyIds.split(',')
+    } else {
+      editData.companyIds = [];
     }
     this.setState({
       editData

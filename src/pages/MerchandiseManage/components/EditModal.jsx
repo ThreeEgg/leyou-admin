@@ -106,8 +106,8 @@ class EditModal extends Component {
             ]}
           >
             <Radio.Group >
-              <Radio value={0}>实物商品</Radio>
-              <Radio value={1}>服务商品</Radio>
+              <Radio value={0}>实物产品</Radio>
+              <Radio value={1}>服务产品</Radio>
             </Radio.Group>
           </Form.Item>
           {/* <Form.Item label="排序" name="sort"

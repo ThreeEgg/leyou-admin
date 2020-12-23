@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, } from 'antd'
 import { getBeansList } from '@/services/fund'
+import { history } from 'umi'
 
 import styles from "./index.less"
 class FundRecord extends Component {
@@ -30,22 +31,34 @@ class FundRecord extends Component {
       title: '手机号',
       dataIndex: 'phone',
     },
-    {
-      title: '操作',
-      dataIndex: '2',
-    },
+
     {
       title: '备注',
       dataIndex: 'remark',
     },
     {
       title: '额度',
-      dataIndex: 'increaseStatus',
-      renderText: (_, item) => {
-        return `${item.increaseStatus === 1 ? '+' : '-'} ${item.point}`;
+      dataIndex: 'point',
+    },
+    {
+      title: '操作',
+      dataIndex: 'userId',
+      render: (_, item) => {
+        return (
+          <Button type="link" size="small" onClick={() => this.gotoFundChange(item.userId)}>查看</Button>
+        )
       }
-    }
+    },
   ]
+
+  gotoFundChange = (userId) => {
+    history.push({
+      pathname: `/clientManage/FundChange`,
+      state: {
+        userId,
+      }
+    })
+  }
 
   formatParams = (paramsData) => {
     const params = paramsData;
