@@ -8,6 +8,7 @@ import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import { LoadingOutlined, PlusOutlined, MinusCircleOutlined, UploadOutlined, EyeOutlined, DeleteOutlined, } from '@ant-design/icons';
 import { addGood, updateGood, } from '@/services/merchandise'
 import { getStateByParams } from "@/utils/tools"
+// import ImgCrop from 'antd-img-crop';
 import styles from "./ProduceEditModal.less"
 //1325402507109228546
 

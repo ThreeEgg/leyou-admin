@@ -147,7 +147,7 @@ class MerchandiseManage extends Component {
   handleClassify = async params => {
     const { success, msg } = await handleClassify(params);
     if (success) {
-      message.success(`${params.isUsed === '1' ? '上架' : '下架'}成功`);
+      message.success(`${params.isSale === '1' ? '上架' : '下架'}成功`);
       this.reload();
     } else {
       message.error(msg)
