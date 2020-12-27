@@ -46,8 +46,8 @@ class MerchandiseManage extends Component {
       title: '商品类型',
       dataIndex: 'isService',
       valueEnum: {
-        0: '实物类产品',
-        1: '服务类产品'
+        0: '实物产品',
+        1: '服务产品'
       }
     },
     {

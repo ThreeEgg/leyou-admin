@@ -117,9 +117,16 @@ class EditModal extends Component {
               }
             </Select>
           </Form.Item>
+          <Form.Item label="身份证号" name="IdNo"
+            rules={[
+              { pattern: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/, message: '请输入正确格式身份证号' },
+            ]}
+          >
+            <Input placeholder="请输入" maxLength={18} />
+          </Form.Item>
           <Form.Item label="其他" name="remark"
             rules={[
-              { required: true, message: '请输入' }
+              // { required: true, message: '请输入' }
             ]}
           >
             <Input placeholder="请输入" maxLength={100} />
