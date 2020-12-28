@@ -117,7 +117,7 @@ class EditModal extends Component {
               }
             </Select>
           </Form.Item>
-          <Form.Item label="身份证号" name="IdNo"
+          <Form.Item label="身份证号" name="idCard"
             rules={[
               { pattern: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/, message: '请输入正确格式身份证号' },
             ]}

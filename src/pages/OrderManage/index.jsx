@@ -1,12 +1,13 @@
 import React, { Component, createRef } from 'react'
 import { PageContainer } from '@ant-design/pro-layout';
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import ProTable from '@ant-design/pro-table';
 import { Button, Space, message, Modal, Select, } from 'antd'
 import { getOrderList, handleOrderStatus, } from '@/services/order'
 import { getFirstClassifyList } from "@/services/classify"
 import moment from "@/utils/moment"
 import EditModal from "./components/EditModal"
+import AddOrder from "./components/AddOrder"
 import ActivityEdit from "./components/ActivityEdit"
 
 const { Option } = Select;
@@ -20,9 +21,10 @@ class OrderManage extends Component {
     flag: 0,
   }
 
-  EditModalRef = createRef()
-  actionRef = createRef()
-  ActivityEditRef = createRef()
+  EditModalRef = createRef();
+  actionRef = createRef();
+  ActivityEditRef = createRef();
+  AddOrderRef = createRef();
 
   columns = [
     {
@@ -229,6 +231,10 @@ class OrderManage extends Component {
     return params
   }
 
+  handleAddOrder = () => {
+    this.AddOrderRef.current.handleOk()
+  }
+
   reload = () => {
     if (this.actionRef.current) {
       this.actionRef.current.reload()
@@ -244,6 +250,11 @@ class OrderManage extends Component {
           actionRef={this.actionRef}
           // search={false}
           columns={columns}
+          toolBarRender={() => [
+            <Button type="primary" size="small" key={1} onClick={() => this.handleAddOrder()}>
+              <PlusOutlined /> 新增
+            </Button>,
+          ]}
           rowKey="id"
           request={(paramsData, sorter) => {
             const params = this.formatParams(paramsData, sorter)
@@ -271,7 +282,8 @@ class OrderManage extends Component {
           }}
         />
         <EditModal ref={this.EditModalRef} editData={editData} reload={this.reload} flag={flag} />
-        <ActivityEdit ref={this.ActivityEditRef} editData={editData} reload={this.reload}></ActivityEdit>
+        <ActivityEdit ref={this.ActivityEditRef} editData={editData} reload={this.reload} />
+        <AddOrder ref={this.AddOrderRef} reload={this.reload} />
       </PageContainer>
     )
   }

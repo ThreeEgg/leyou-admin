@@ -34,6 +34,10 @@ class ClientManage extends Component {
       dataIndex: 'realName',
     },
     {
+      title: '身份证号',
+      dataIndex: 'idCard',
+    },
+    {
       title: '企业名称',
       dataIndex: 'companyName',
       hideInTable: true,

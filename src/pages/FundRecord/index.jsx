@@ -26,6 +26,11 @@ class FundRecord extends Component {
     {
       title: '操作时间',
       dataIndex: 'createTime',
+      search: false,
+    },
+    {
+      title: '客户',
+      dataIndex: 'realName'
     },
     {
       title: '手机号',
@@ -35,14 +40,17 @@ class FundRecord extends Component {
     {
       title: '备注',
       dataIndex: 'remark',
+      search: false,
     },
     {
       title: '额度',
       dataIndex: 'point',
+      search: false,
     },
     {
       title: '操作',
       dataIndex: 'userId',
+      search: false,
       render: (_, item) => {
         return (
           <Button type="link" size="small" onClick={() => this.gotoFundChange(item.userId)}>查看</Button>
@@ -82,7 +90,7 @@ class FundRecord extends Component {
       >
         <ProTable
           // actionRef={this.actionRef}
-          search={false}
+          // search={false}
           columns={columns}
           // toolBarRender={() => [
           //   <Button type="primary" size="small" key={1}>

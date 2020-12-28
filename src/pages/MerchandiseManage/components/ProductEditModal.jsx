@@ -424,6 +424,7 @@ class ProduceEditModal extends Component {
             >
               {coverLink ? <img src={coverLink} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
             </Upload>
+            <span>建议比例 160:135</span>
           </Form.Item>
           <Form.Item label="轮播图" name="bannerList"
             rules={[
@@ -457,6 +458,7 @@ class ProduceEditModal extends Component {
             >
               {bannerFileList.length >= 10 ? null : uploadButton}
             </Upload>
+            <span>建议比例 750:633</span>
           </Form.Item>
           <Form.Item label="商品品类" >
             <Form.List name="goodsDetails" >
@@ -636,6 +638,7 @@ class ProduceEditModal extends Component {
             >
               {detailFileList.length >= 10 ? null : uploadButton}
             </Upload>
+            <span>建议宽度 750</span>
           </Form.Item>
         </Form>
         <Modal

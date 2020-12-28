@@ -8,6 +8,18 @@ import { history } from 'umi'
 import moment from '@/utils/moment'
 import EditModal from "./components/EditModal"
 
+const typeArr = [
+  { value: 'A', label: '农林牧渔|NL' }, { value: 'B', label: '采矿业|CK' },
+  { value: 'C', label: '制造业|ZZ' }, { value: 'D', label: '电力、热力、燃气及水生产和供应业|DL' },
+  { value: 'E', label: '建筑业|JZ' }, { value: 'F', label: '批发、商贸和零售业|PF' },
+  { value: 'G', label: '交通运输、仓储和邮政业|JT' }, { value: 'H', label: '住宿和餐饮业|ZS' },
+  { value: 'I', label: '信息传输、软件和信息技术服务业|XX' }, { value: 'J', label: '金融业|JR' },
+  { value: 'K', label: '房地产业|FD' }, { value: 'L', label: '租赁和商务服务业|ZL' },
+  { value: 'M', label: '科学研究和技术服务业|KX' }, { value: 'N', label: '水利、环境和公共设施管理业|SL' },
+  { value: 'O', label: '卫生和社会工作|WS' }, { value: 'P', label: '教育|JY' },
+  { value: 'Q', label: '科学研究和技术服务业|KX' }, { value: 'R', label: '文化、体育和娱乐业|WH' },
+  { value: 'S', label: '公共管理、社会保障和社会组织|GG' }, { value: 'T', label: '其他|QT' }
+]
 const { confirm } = Modal;
 class EnterpriseManage extends Component {
 
@@ -33,6 +45,10 @@ class EnterpriseManage extends Component {
     {
       title: '统一社会信用代码',
       dataIndex: 'creditCode',
+    },
+    {
+      title: '企业编码',
+      dataIndex: 'code',
     },
     {
       title: '手机号',
@@ -61,6 +77,18 @@ class EnterpriseManage extends Component {
         0: '已停用',
         1: '已启用'
       }
+    },
+    {
+      title: "行业分类",
+      dataIndex: 'type',
+      render: value => {
+        return (typeArr.find(item => item.value === value) || {}).label;
+      }
+    },
+    {
+      title: "商业模式描述",
+      dataIndex: 'desc',
+      ellipsis: true
     },
     {
       title: '报表数量',
