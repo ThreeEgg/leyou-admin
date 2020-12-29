@@ -97,10 +97,22 @@ class OrderManage extends Component {
     {
       title: '订单状态',
       dataIndex: 'orderStatus',
-      valueEnum: {
+      /* valueEnum: {
         0: '未支付',
         1: '已完成',
         2: '已失效'
+      } */
+      render: (_, item) => {
+        switch (item.orderStatus) {
+          case 0:
+            return item.typeName === "实物产品" ? "未支付" : "待完成";
+          case 1:
+            return "已完成";
+          case 2:
+            return "已失效";
+          default:
+            return "";
+        }
       }
     },
     {
@@ -117,23 +129,23 @@ class OrderManage extends Component {
       render: (_, item) => (
         <Space>
           {
-            (item.orderStatus === 0 || item.orderStatus === 1) && item.typeName !== "实物类产品" &&
+            (item.orderStatus === 0 || item.orderStatus === 1) && item.typeName !== "实物产品" &&
             <Button type="link" size="small" onClick={() => this.handleConfirm(item)}>变更状态</Button>
           }
           {
-            item.orderStatus === 0 && item.typeName !== "实物类产品" && <Button type="link" size="small" onClick={() => { this.handleModal(3, item) }}>修改金额</Button>
+            item.orderStatus === 0 && item.typeName !== "实物产品" && <Button type="link" size="small" onClick={() => { this.handleModal(3, item) }}>修改金额</Button>
           }
           {
-            item.orderStatus === 1 && item.typeName !== "实物类产品" && <>
+            item.orderStatus === 1 && item.typeName !== "实物产品" && <>
               <Button type="link" size="small" onClick={() => this.handleActivity(item)}>商品活动</Button>
               <Button type="link" size="small" onClick={() => { this.handleModal(2, item) }}>服务时间设置</Button>
             </>
           }
           {
-            item.typeName === "实物类产品" && <Button type="link" size="small" onClick={() => { this.handleModal(1, item) }}>上传快递单号</Button>
+            item.typeName === "实物产品" && <Button type="link" size="small" onClick={() => { this.handleModal(1, item) }}>上传快递单号</Button>
           }
           {
-            item.typeName !== "实物类产品" && <Button type="link" size="small" onClick={() => this.viewContract(item.agreementLink)}>查看合同</Button>
+            item.typeName !== "实物产品" && <Button type="link" size="small" onClick={() => this.viewContract(item.agreementLink)}>查看合同</Button>
           }
 
         </Space>
