@@ -6,13 +6,13 @@ export const getOrderList = async (params) => {
   return request(`${api.orderList}?${qs.stringify(params)}`);
 }
 
-export const handleOrderStatus = async params =>{
+export const handleOrderStatus = async params => {
   return request(`${api.handleOrderStatus}?${qs.stringify(params)}`);
 }
 
-export const addClassify = async params =>{
-  return request.post(`${api.addClassify}`,{
-    data:params
+export const addClassify = async params => {
+  return request.post(`${api.addClassify}`, {
+    data: params
   })
 }
 
@@ -28,9 +28,15 @@ export const updateTotalPrice = async (params) => {
   return request(`${api.updateTotalPrice}?${qs.stringify(params)}`);
 }
 
-export const updateActivity = async params =>{
-  return request.post(`${api.updateActivity}`,{
-    data:params
+export const updateActivity = async params => {
+  return request.post(`${api.updateActivity}`, {
+    data: params
+  })
+}
+
+export const addOrder = async params => {
+  return request.post(`${api.addOrder}`, {
+    data: params
   })
 }
 

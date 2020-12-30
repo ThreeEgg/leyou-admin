@@ -59,6 +59,8 @@ export default {
 
   updateActivity: '/order/updateActivityByOrderId', // 商品活动
 
+  addOrder: '/order/saveOrderInfo', // 新增订单
+
   /**
    * 簿记豆流水
    */

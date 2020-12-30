@@ -36,7 +36,7 @@ class FundChange extends Component {
     },
     {
       title: '操作',
-      dataIndex: 'operation',
+      dataIndex: 'desc',
     },
     {
       title: '备注',

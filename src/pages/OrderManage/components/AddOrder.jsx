@@ -3,6 +3,7 @@ import { Modal, Form, Input, message, InputNumber, Select, } from 'antd';
 import { getClientList } from '@/services/client'
 import { getClassifyList } from '@/services/classify'
 import { getGoodList, getGoodDetail, } from '@/services/merchandise'
+import { addOrder } from '@/services/order'
 
 const { Option } = Select;
 class AddOrder extends Component {
@@ -85,11 +86,25 @@ class AddOrder extends Component {
   };
 
   onFinish = paramsData => {
-    const { editData, flag } = this.props;
     const params = paramsData;
-
+    delete params.classify;
+    const { goodsDetails } = this.state;
+    const goodObj = goodsDetails.find(item => item.id === params.goodsDetailId);
+    params.unitPrice = goodObj.price;
+    params.goodsDetailName = goodObj.detailName;
+    this.addOrder(params);
   }
 
+  addOrder = async params => {
+    const { success, msg } = await addOrder(params);
+    if (success) {
+      message.success('下单成功');
+      this.props.reload();
+      this.handleCancel()
+    } else {
+      message.error(msg);
+    }
+  }
 
 
   updateServiceTime = async params => {
@@ -106,15 +121,16 @@ class AddOrder extends Component {
   calculateCount = () => {
     // totalPrice
     const { current } = this.orderFormRef;
-    const price = current.getFieldValue('price');
-    const count = current.getFieldValue('count');
+    const { goodsDetails } = this.state;
+    const goodsDetailId = current.getFieldValue('goodsDetailId');
+    const goodObj = goodsDetails.find(item => item.id === goodsDetailId);
+    const goodsCount = current.getFieldValue('goodsCount');
 
-    if (price && count) {
+    if (goodObj.price && goodsCount) {
       current.setFieldsValue({
-        totalPrice: price * count,
+        totalPrice: goodObj.price * goodsCount,
       })
     }
-
   }
 
   render() {
@@ -134,7 +150,7 @@ class AddOrder extends Component {
         destroyOnClose
       >
         <Form name="orderForm" onFinish={this.onFinish} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} ref={this.orderFormRef}>
-          <Form.Item label="客户" name="client"
+          <Form.Item label="客户" name="userId"
             rules={[
               { required: true, message: '请选择' }
             ]}
@@ -164,7 +180,7 @@ class AddOrder extends Component {
               }
             </Select>
           </Form.Item>
-          <Form.Item label="商品名称" name="goodId"
+          <Form.Item label="商品名称" name="goodsId"
             rules={[
               { required: true, message: '请选择' }
             ]}
@@ -177,7 +193,7 @@ class AddOrder extends Component {
               }
             </Select>
           </Form.Item>
-          <Form.Item label="商品名称" name="price"
+          <Form.Item label="商品品类" name="goodsDetailId"
             rules={[
               { required: true, message: '请选择' }
             ]}
@@ -185,12 +201,12 @@ class AddOrder extends Component {
             <Select placeholder="请先选择商品" onChange={this.calculateCount}>
               {
                 goodsDetails.map(good => (
-                  <Option key={good.id} value={good.price}>{good.detailName}</Option>
+                  <Option key={good.id} value={good.id}>{good.detailName}</Option>
                 ))
               }
             </Select>
           </Form.Item>
-          <Form.Item label="商品数量" name="count"
+          <Form.Item label="商品数量" name="goodsCount"
             rules={[
               { required: true, message: '请输入' }
             ]}
